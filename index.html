@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Reading Part 4 – 10 Tests (Cloze 2 cột)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b1a2f; --glass-bg: rgba(255,255,255,0.08);
+      --border: rgba(255,255,255,0.2); --shadow: 0 20px 45px rgba(0,0,0,0.45);
+      --text: #eef2f6; --text2: #b0c4d9; --muted: #8899aa;
+      --btn-bg: rgba(255,255,255,0.12); --btn-border: rgba(255,255,255,0.25);
+      --hover-bg: rgba(255,255,255,0.22); --card-hover: rgba(255,255,255,0.3);
+      --q-bg: rgba(255,255,255,0.06); --badge: linear-gradient(135deg, #4da8da, #2565ae);
+      --correct-bg: rgba(46,204,113,0.25); --wrong-bg: rgba(231,76,60,0.25);
+      --correct-text: #2ecc71; --wrong-text: #e74c3c;
+      --accent: #5a9fd4;
+    }
+    body.light-mode {
+      --bg: #eaf0f8; --glass-bg: rgba(255,255,255,0.65);
+      --border: rgba(0,0,0,0.12); --shadow: 0 20px 45px rgba(0,0,0,0.1);
+      --text: #1a2b3c; --text2: #334758; --muted: #5a6d80;
+      --btn-bg: rgba(255,255,255,0.8); --btn-border: rgba(0,0,0,0.15);
+      --hover-bg: rgba(255,255,255,0.95); --card-hover: rgba(0,0,0,0.2);
+      --q-bg: rgba(0,0,0,0.03); --badge: linear-gradient(135deg, #0d6efd, #0a58ca);
+      --correct-bg: rgba(46,204,113,0.12); --wrong-bg: rgba(231,76,60,0.12);
+      --correct-text: #1e7a45; --wrong-text: #b33126;
+      --accent: #2c7da0;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family: 'Inter', sans-serif; background: var(--bg);
+      min-height: 100vh; display: flex; justify-content: center; align-items: flex-start;
+      padding: 2rem 1.2rem; color: var(--text); transition: background 0.4s, color 0.3s;
+      line-height: 1.5;
+    }
+    .main-container { width:100%; max-width:1200px; display:flex; flex-direction:column; gap:2rem; }
+    .top-bar { display:flex; justify-content:flex-end; gap:1rem; align-items:center; }
+    .theme-toggle, .select-test {
+      background: var(--btn-bg); border:1px solid var(--btn-border);
+      padding:0.5rem 1.2rem; border-radius:2rem; cursor:pointer;
+      font-weight:600; font-size:0.95rem; color:var(--text);
+      backdrop-filter: blur(8px); transition:0.25s;
+    }
+    .theme-toggle:hover, .select-test:hover { background:var(--hover-bg); }
+    .glass-card {
+      background: var(--glass-bg); backdrop-filter: blur(20px) saturate(160%);
+      -webkit-backdrop-filter: blur(20px) saturate(160%);
+      border:1px solid var(--border); border-radius:2rem;
+      padding:1.8rem 2rem; box-shadow:var(--shadow); transition:0.25s;
+    }
+    .test-header { display:flex; align-items:center; gap:0.8rem; margin-bottom:1.5rem; }
+    .test-badge { background:var(--badge); padding:0.35rem 1.1rem; border-radius:2rem; font-weight:700; font-size:0.9rem; color:#fff; }
+    .test-title { font-size:1.5rem; font-weight:700; color:var(--text); }
+    .two-col { display:grid; grid-template-columns: 1fr 1fr; gap:2rem; }
+    @media (max-width: 800px) { .two-col { grid-template-columns: 1fr; } }
+    .passage-box { font-size:1.02rem; line-height:1.7; white-space:pre-wrap; color:var(--text); }
+    .blank {
+      display:inline-block; min-width:2.2rem; text-align:center;
+      border-bottom:1.5px dashed var(--text2); margin:0 0.2rem;
+      font-weight:600; color:var(--accent);
+    }
+    .vi-box {
+      font-style:italic; color:var(--text2);
+      border-left:3px solid rgba(120,180,255,0.5);
+      padding-left:1.2rem; margin-top:1rem; white-space:pre-wrap;
+    }
+    .toggle-btn {
+      background:var(--btn-bg); border:1px solid var(--btn-border);
+      color:var(--text); font-weight:600; font-size:0.85rem;
+      padding:0.4rem 1rem; border-radius:2rem; cursor:pointer;
+      transition:0.25s; margin-top:0.5rem;
+    }
+    .toggle-btn:hover { background:var(--hover-bg); }
+
+    /* === BẢNG ĐÁP ÁN KHÔNG CUỘN NGANG === */
+    .answer-col { overflow: visible; }
+    table {
+      width: 100%; table-layout: fixed; border-collapse: collapse;
+      background: var(--q-bg); border-radius:1rem; overflow: hidden;
+    }
+    th, td {
+      padding: 0.35rem 0.4rem; font-size: 0.88rem;
+      text-align: center; border:1px solid var(--border);
+      color: var(--text); word-break: break-word;
+    }
+    th { background:rgba(255,255,255,0.05); font-weight:600; }
+    td:first-child { font-weight:700; }
+    td label {
+      margin:0 0.2rem; cursor:pointer;
+      display:inline-flex; align-items:center; gap:2px;
+    }
+
+    .check-btn {
+      background:var(--accent); border:none; color:#fff; padding:0.5rem 1.5rem;
+      border-radius:2rem; cursor:pointer; font-weight:600; margin:0.8rem 0.5rem 0 0;
+      transition:0.2s;
+    }
+    .check-btn:hover { filter:brightness(1.1); }
+    .key-block { margin-top:0.5rem; padding:0.8rem; background:var(--q-bg); border-radius:1rem; }
+    .correct-row td { background:var(--correct-bg) !important; }
+    .wrong-row td { background:var(--wrong-bg) !important; }
+    .hidden { display:none; }
+  </style>
+</head>
+<body>
+<div class="main-container">
+  <div class="top-bar">
+    <select id="testSelect" class="select-test">
+      <option value="all">📚 Tất cả các bài</option>
+    </select>
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">🌙 Dark</button>
+  </div>
+
+  <!-- TEST 16 -->
+  <article class="glass-card test-item" data-testid="test16">
+    <div class="test-header"><span class="test-badge">Test 16</span><h2 class="test-title">WHO WANTS TO BE A MILLIONAIRE?</h2></div>
+    <div class="two-col">
+      <div class="passage-box">The world most popular TV quiz show started in the UK in 1998. The idea has now spread to over 100 countries, including Greece and Spain.<br><br>One person, the contestant, must answer 15 multiple-choice questions correctly to win the $1m top <span class="blank" data-q="21">21</span>. If at any <span class="blank" data-q="22">22</span> they answer incorrectly, the game is over. A computer selects the questions from a database of 2,500. <span class="blank" data-q="23">23</span> that point, nobody knows <span class="blank" data-q="24">24</span> questions about to be asked. The programme gets more <span class="blank" data-q="25">25</span> as the money increases. Now contestants are really afraid <span class="blank" data-q="26">26</span> making a mistake. It's possible, <span class="blank" data-q="27">27</span> unusual, for a contestant to leave the show with <span class="blank" data-q="28">28</span> money at all.<br><br>Contestants can get help. One way is to "Phone a friend". They may speak to a friend <span class="blank" data-q="29">29</span> the phone for 30 seconds to <span class="blank" data-q="30">30</span> the question.<br><br>The phrase "Can I phone a friend?" has now become part of modern everyday English.</div>
+      <div class="answer-col">
+        <table>
+          <tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th></tr>
+          <tr data-q="21"><td>21</td><td><label><input type="radio" name="t16_21" value="A"> amount</label></td><td><label><input type="radio" name="t16_21" value="B"> prize</label></td><td><label><input type="radio" name="t16_21" value="C"> award</label></td><td><label><input type="radio" name="t16_21" value="D"> winning</label></td></tr>
+          <tr data-q="22"><td>22</td><td><label><input type="radio" name="t16_22" value="A"> time</label></td><td><label><input type="radio" name="t16_22" value="B"> period</label></td><td><label><input type="radio" name="t16_22" value="C"> day</label></td><td><label><input type="radio" name="t16_22" value="D"> hour</label></td></tr>
+          <tr data-q="23"><td>23</td><td><label><input type="radio" name="t16_23" value="A"> On</label></td><td><label><input type="radio" name="t16_23" value="B"> From</label></td><td><label><input type="radio" name="t16_23" value="C"> Since</label></td><td><label><input type="radio" name="t16_23" value="D"> Until</label></td></tr>
+          <tr data-q="24"><td>24</td><td><label><input type="radio" name="t16_24" value="A"> the</label></td><td><label><input type="radio" name="t16_24" value="B"> some</label></td><td><label><input type="radio" name="t16_24" value="C"> what</label></td><td><label><input type="radio" name="t16_24" value="D"> that</label></td></tr>
+          <tr data-q="25"><td>25</td><td><label><input type="radio" name="t16_25" value="A"> serious</label></td><td><label><input type="radio" name="t16_25" value="B"> important</label></td><td><label><input type="radio" name="t16_25" value="C"> strong</label></td><td><label><input type="radio" name="t16_25" value="D"> firm</label></td></tr>
+          <tr data-q="26"><td>26</td><td><label><input type="radio" name="t16_26" value="A"> of</label></td><td><label><input type="radio" name="t16_26" value="B"> to</label></td><td><label><input type="radio" name="t16_26" value="C"> for</label></td><td><label><input type="radio" name="t16_26" value="D"> by</label></td></tr>
+          <tr data-q="27"><td>27</td><td><label><input type="radio" name="t16_27" value="A"> and</label></td><td><label><input type="radio" name="t16_27" value="B"> or</label></td><td><label><input type="radio" name="t16_27" value="C"> but</label></td><td><label><input type="radio" name="t16_27" value="D"> even</label></td></tr>
+          <tr data-q="28"><td>28</td><td><label><input type="radio" name="t16_28" value="A"> no</label></td><td><label><input type="radio" name="t16_28" value="B"> some</label></td><td><label><input type="radio" name="t16_28" value="C"> any</label></td><td><label><input type="radio" name="t16_28" value="D"> much</label></td></tr>
+          <tr data-q="29"><td>29</td><td><label><input type="radio" name="t16_29" value="A"> by</label></td><td><label><input type="radio" name="t16_29" value="B"> on</label></td><td><label><input type="radio" name="t16_29" value="C"> with</label></td><td><label><input type="radio" name="t16_29" value="D"> in</label></td></tr>
+          <tr data-q="30"><td>30</td><td><label><input type="radio" name="t16_30" value="A"> discuss</label></td><td><label><input type="radio" name="t16_30" value="B"> talk</label></td><td><label><input type="radio" name="t16_30" value="C"> chat</label></td><td><label><input type="radio" name="t16_30" value="D"> argue</label></td></tr>
+        </table>
+      </div>
+    </div>
+    <div style="display:flex; flex-wrap:wrap; align-items:center;">
+      <button class="check-btn" onclick="checkTest('test16')">✅ Kiểm tra</button>
+      <button class="toggle-btn" onclick="toggleAnsKey('key16')">🔑 Đáp án</button>
+      <button class="toggle-btn" onclick="toggleVi('vi16')">🌐 Bản dịch</button>
+    </div>
+    <div id="key16" class="key-block hidden"><strong>21.B</strong> prize | <strong>22.A</strong> time | <strong>23.D</strong> Until | <strong>24.C</strong> what | <strong>25.B</strong> important | <strong>26.A</strong> of | <strong>27.C</strong> but | <strong>28.A</strong> no | <strong>29.B</strong> on | <strong>30.A</strong> discuss</div>
+    <div id="vi16" class="vi-box hidden">Chương trình trò chơi truyền hình nổi tiếng nhất thế giới bắt đầu tại Anh vào năm 1998. Ý tưởng này hiện đã lan rộng ra hơn 100 quốc gia, bao gồm Hy Lạp và Tây Ban Nha.<br><br>Một người chơi, thí sinh, phải trả lời đúng 15 câu hỏi trắc nghiệm để giành được giải thưởng cao nhất trị giá 1 triệu đô la (21). Nếu bất kỳ lúc nào (22) họ trả lời sai, trò chơi kết thúc. Máy tính chọn câu hỏi từ cơ sở dữ liệu 2.500 câu. (23) thời điểm đó, không ai biết (24) câu hỏi sắp được đưa ra. Chương trình trở nên (25) hơn khi tiền thưởng tăng lên. Lúc này các thí sinh thực sự sợ (26) phạm sai lầm. Có thể, (27) hiếm khi, một thí sinh rời chương trình mà (28) đồng tiền nào cả.<br><br>Thí sinh có thể nhận được sự trợ giúp. Một cách là "Gọi điện cho bạn bè". Họ có thể nói chuyện với một người bạn (29) điện thoại trong 30 giây để (30) câu hỏi.<br><br>Câu "Tôi gọi điện cho bạn được không?" giờ đây đã trở thành một phần của tiếng Anh giao tiếp hiện đại.</div>
+  </article>
+
+  <!-- TEST 17 -->
+  <article class="glass-card test-item" data-testid="test17">
+    <div class="test-header"><span class="test-badge">Test 17</span><h2 class="test-title">SHOULD WE EAT LESS MEAT?</h2></div>
+    <div class="two-col">
+      <div class="passage-box">Since the 1960s people have eaten more and more meat. One reason for the increase in the popularity of meat is the rise of fast-food restaurants.<br><br>Some scientists think the increase in the <span class="blank" data-q="21">21</span> of meat that people eat is going to be a <span class="blank" data-q="22">22</span> problem in the future because the world's population is <span class="blank" data-q="23">23</span> to grow from 7 billion to more than 9 billion. As meat is <span class="blank" data-q="24">24</span> more popular in some Asian countries, scientists say that the amount of meat we eat will keep going <span class="blank" data-q="25">25</span>. What scientists are <span class="blank" data-q="26">26</span> of is that it takes a lot of water and energy to grow the crops the food needed to <span class="blank" data-q="27">27</span> farm animals. A lot of land <span class="blank" data-q="28">28</span> also needed to grow the food that farm animals eat, which could be used to produce crops for people to eat <span class="blank" data-q="29">29</span>. However, other scientists say that meat may become so expensive to produce that people won't go <span class="blank" data-q="30">30</span> buying it.</div>
+      <div class="answer-col">
+        <table>
+          <tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th></tr>
+          <tr data-q="21"><td>21</td><td><label><input type="radio" name="t17_21" value="A"> total</label></td><td><label><input type="radio" name="t17_21" value="B"> number</label></td><td><label><input type="radio" name="t17_21" value="C"> amount</label></td><td><label><input type="radio" name="t17_21" value="D"> size</label></td></tr>
+          <tr data-q="22"><td>22</td><td><label><input type="radio" name="t17_22" value="A"> serious</label></td><td><label><input type="radio" name="t17_22" value="B"> hard</label></td><td><label><input type="radio" name="t17_22" value="C"> certain</label></td><td><label><input type="radio" name="t17_22" value="D"> true</label></td></tr>
+          <tr data-q="23"><td>23</td><td><label><input type="radio" name="t17_23" value="A"> hoped</label></td><td><label><input type="radio" name="t17_23" value="B"> expected</label></td><td><label><input type="radio" name="t17_23" value="C"> thought</label></td><td><label><input type="radio" name="t17_23" value="D"> known</label></td></tr>
+          <tr data-q="24"><td>24</td><td><label><input type="radio" name="t17_24" value="A"> becoming</label></td><td><label><input type="radio" name="t17_24" value="B"> moving</label></td><td><label><input type="radio" name="t17_24" value="C"> developing</label></td><td><label><input type="radio" name="t17_24" value="D"> reaching</label></td></tr>
+          <tr data-q="25"><td>25</td><td><label><input type="radio" name="t17_25" value="A"> for</label></td><td><label><input type="radio" name="t17_25" value="B"> on</label></td><td><label><input type="radio" name="t17_25" value="C"> off</label></td><td><label><input type="radio" name="t17_25" value="D"> up</label></td></tr>
+          <tr data-q="26"><td>26</td><td><label><input type="radio" name="t17_26" value="A"> worried</label></td><td><label><input type="radio" name="t17_26" value="B"> afraid</label></td><td><label><input type="radio" name="t17_26" value="C"> anxious</label></td><td><label><input type="radio" name="t17_26" value="D"> upset</label></td></tr>
+          <tr data-q="27"><td>27</td><td><label><input type="radio" name="t17_27" value="A"> feed</label></td><td><label><input type="radio" name="t17_27" value="B"> provide</label></td><td><label><input type="radio" name="t17_27" value="C"> care</label></td><td><label><input type="radio" name="t17_27" value="D"> give</label></td></tr>
+          <tr data-q="28"><td>28</td><td><label><input type="radio" name="t17_28" value="A"> was</label></td><td><label><input type="radio" name="t17_28" value="B"> are</label></td><td><label><input type="radio" name="t17_28" value="C"> is</label></td><td><label><input type="radio" name="t17_28" value="D"> have</label></td></tr>
+          <tr data-q="29"><td>29</td><td><label><input type="radio" name="t17_29" value="A"> actually</label></td><td><label><input type="radio" name="t17_29" value="B"> besides</label></td><td><label><input type="radio" name="t17_29" value="C"> already</label></td><td><label><input type="radio" name="t17_29" value="D"> instead</label></td></tr>
+          <tr data-q="30"><td>30</td><td><label><input type="radio" name="t17_30" value="A"> off</label></td><td><label><input type="radio" name="t17_30" value="B"> up</label></td><td><label><input type="radio" name="t17_30" value="C"> on</label></td><td><label><input type="radio" name="t17_30" value="D"> argue</label></td></tr>
+        </table>
+      </div>
+    </div>
+    <div style="display:flex; flex-wrap:wrap; align-items:center;">
+      <button class="check-btn" onclick="checkTest('test17')">✅ Kiểm tra</button>
+      <button class="toggle-btn" onclick="toggleAnsKey('key17')">🔑 Đáp án</button>
+      <button class="toggle-btn" onclick="toggleVi('vi17')">🌐 Bản dịch</button>
+    </div>
+    <div id="key17" class="key-block hidden"><strong>21.C</strong> amount | <strong>22.A</strong> serious | <strong>23.B</strong> expected | <strong>24.A</strong> becoming | <strong>25.D</strong> up | <strong>26.B</strong> afraid | <strong>27.A</strong> feed | <strong>28.C</strong> is | <strong>29.D</strong> instead | <strong>30.C</strong> on</div>
+    <div id="vi17" class="vi-box hidden">Kể từ những năm 1960, con người đã ăn ngày càng nhiều thịt hơn. Một lý do cho sự gia tăng mức độ phổ biến của thịt là sự phát triển của các nhà hàng thức ăn nhanh.<br><br>Một số nhà khoa học cho rằng sự gia tăng (21) thịt mà con người ăn sẽ trở thành một vấn đề (22) trong tương lai vì dân số thế giới được (23) sẽ tăng từ 7 tỉ lên hơn 9 tỉ người. Khi thịt đang (24) phổ biến hơn ở một số nước châu Á, các nhà khoa học nói rằng lượng thịt chúng ta ăn sẽ tiếp tục tăng (25). Điều mà các nhà khoa học (26) là cần rất nhiều nước và năng lượng để trồng các loại cây lương thực – thức ăn cần thiết để (27) vật nuôi trong trang trại. Rất nhiều đất đai (28) cũng cần thiết để trồng thức ăn cho vật nuôi, số đất này lẽ ra có thể được dùng để sản xuất hoa màu cho con người ăn (29). Tuy nhiên, các nhà khoa học khác lại nói rằng thịt có thể trở nên đắt đỏ đến mức người ta sẽ không (30) mua nó nữa.</div>
+  </article>
+
+  <!-- TEST 18 -->
+  <article class="glass-card test-item" data-testid="test18">
+    <div class="test-header"><span class="test-badge">Test 18</span><h2 class="test-title">HOLIDAYS IN SPACE</h2></div>
+    <div class="two-col">
+      <div class="passage-box">You have probably had lots of holidays by the beach. So how about trying something <span class="blank" data-q="21">21</span> different – like going into space? Scientists <span class="blank" data-q="22">22</span> that if everything goes well, tourists <span class="blank" data-q="23">23</span> soon be able to travel into space on specially designed planes. They could travel as <span class="blank" data-q="24">24</span> as 70 miles above the Earth and enjoy great views in <span class="blank" data-q="25">25</span> direction. This would be similar to <span class="blank" data-q="26">26</span> astronauts on board the International Space Station can see now.<br><br>The special planes are expected to <span class="blank" data-q="27">27</span> off from a 3,000-metre runway. During the flight, passengers could <span class="blank" data-q="28">28</span> up to 15 minutes in space. They'd also have the <span class="blank" data-q="29">29</span> to experience how it feels to float around weightless!<br><br>However, tickets are likely to be <span class="blank" data-q="30">30</span> expensive – so maybe it's a much better idea to go to the beach after all.</div>
+      <div class="answer-col">
+        <table>
+          <tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th></tr>
+          <tr data-q="21"><td>21</td><td><label><input type="radio" name="t18_21" value="A"> completely</label></td><td><label><input type="radio" name="t18_21" value="B"> properly</label></td><td><label><input type="radio" name="t18_21" value="C"> certainly</label></td><td><label><input type="radio" name="t18_21" value="D"> surely</label></td></tr>
+          <tr data-q="22"><td>22</td><td><label><input type="radio" name="t18_22" value="A"> want</label></td><td><label><input type="radio" name="t18_22" value="B"> hope</label></td><td><label><input type="radio" name="t18_22" value="C"> wish</label></td><td><label><input type="radio" name="t18_22" value="D"> need</label></td></tr>
+          <tr data-q="23"><td>23</td><td><label><input type="radio" name="t18_23" value="A"> must</label></td><td><label><input type="radio" name="t18_23" value="B"> can</label></td><td><label><input type="radio" name="t18_23" value="C"> will</label></td><td><label><input type="radio" name="t18_23" value="D"> would</label></td></tr>
+          <tr data-q="24"><td>24</td><td><label><input type="radio" name="t18_24" value="A"> fast</label></td><td><label><input type="radio" name="t18_24" value="B"> long</label></td><td><label><input type="radio" name="t18_24" value="C"> distant</label></td><td><label><input type="radio" name="t18_24" value="D"> far</label></td></tr>
+          <tr data-q="25"><td>25</td><td><label><input type="radio" name="t18_25" value="A"> every</label></td><td><label><input type="radio" name="t18_25" value="B"> all</label></td><td><label><input type="radio" name="t18_25" value="C"> some</label></td><td><label><input type="radio" name="t18_25" value="D"> several</label></td></tr>
+          <tr data-q="26"><td>26</td><td><label><input type="radio" name="t18_26" value="A"> who</label></td><td><label><input type="radio" name="t18_26" value="B"> what</label></td><td><label><input type="radio" name="t18_26" value="C"> whose</label></td><td><label><input type="radio" name="t18_26" value="D"> which</label></td></tr>
+          <tr data-q="27"><td>27</td><td><label><input type="radio" name="t18_27" value="A"> get</label></td><td><label><input type="radio" name="t18_27" value="B"> put</label></td><td><label><input type="radio" name="t18_27" value="C"> take</label></td><td><label><input type="radio" name="t18_27" value="D"> put</label></td></tr>
+          <tr data-q="28"><td>28</td><td><label><input type="radio" name="t18_28" value="A"> spend</label></td><td><label><input type="radio" name="t18_28" value="B"> use</label></td><td><label><input type="radio" name="t18_28" value="C"> pass</label></td><td><label><input type="radio" name="t18_28" value="D"> keep</label></td></tr>
+          <tr data-q="29"><td>29</td><td><label><input type="radio" name="t18_29" value="A"> luck</label></td><td><label><input type="radio" name="t18_29" value="B"> occasion</label></td><td><label><input type="radio" name="t18_29" value="C"> advantage</label></td><td><label><input type="radio" name="t18_29" value="D"> chance</label></td></tr>
+          <tr data-q="30"><td>30</td><td><label><input type="radio" name="t18_30" value="A"> extremely</label></td><td><label><input type="radio" name="t18_30" value="B"> totally</label></td><td><label><input type="radio" name="t18_30" value="C"> actually</label></td><td><label><input type="radio" name="t18_30" value="D"> absolutely</label></td></tr>
+        </table>
+      </div>
+    </div>
+    <div style="display:flex; flex-wrap:wrap; align-items:center;">
+      <button class="check-btn" onclick="checkTest('test18')">✅ Kiểm tra</button>
+      <button class="toggle-btn" onclick="toggleAnsKey('key18')">🔑 Đáp án</button>
+      <button class="toggle-btn" onclick="toggleVi('vi18')">🌐 Bản dịch</button>
+    </div>
+    <div id="key18" class="key-block hidden"><strong>21.A</strong> completely | <strong>22.B</strong> hope | <strong>23.C</strong> will | <strong>24.D</strong> far | <strong>25.A</strong> every | <strong>26.B</strong> what | <strong>27.C</strong> take | <strong>28.A</strong> spend | <strong>29.D</strong> chance | <strong>30.A</strong> extremely</div>
+    <div id="vi18" class="vi-box hidden">Bạn hẳn đã có rất nhiều kỳ nghỉ ở bãi biển. Vậy thử một điều gì đó (21) khác biệt thì sao – như du hành vào vũ trụ? Các nhà khoa học (22) rằng nếu mọi thứ suôn sẻ, du khách (23) sớm có thể bay vào không gian trên những chiếc máy bay được thiết kế đặc biệt. Họ có thể bay cao (24) 70 dặm phía trên Trái Đất và tận hưởng cảnh quan tuyệt vời ở (25) hướng. Điều này sẽ tương tự như những gì (26) các phi hành gia trên Trạm Vũ trụ Quốc tế có thể nhìn thấy hiện nay.<br><br>Những chiếc máy bay đặc biệt này dự kiến sẽ (27) cất cánh từ một đường băng dài 3.000 mét. Trong suốt chuyến bay, hành khách có thể (28) tới 15 phút trong không gian. Họ cũng sẽ có (29) cơ hội trải nghiệm cảm giác lơ lửng không trọng lượng!<br><br>Tuy nhiên, giá vé có vẻ sẽ (30) cực kỳ đắt – vì vậy có lẽ ý tưởng đi biển vẫn hay hơn nhiều.</div>
+  </article>
+
+  <!-- TEST 19 -->
+  <article class="glass-card test-item" data-testid="test19">
+    <div class="test-header"><span class="test-badge">Test 19</span><h2 class="test-title">ADVERTISING</h2></div>
+    <div class="two-col">
+      <div class="passage-box">When a company wants to increase the sales of a product, it will advertise. An advertisement <span class="blank" data-q="21">21</span> us what products are available and it also <span class="blank" data-q="22">22</span> us to buy a particular product.<br><br>Today's television advertisements <span class="blank" data-q="23">23</span> millions of people, but the first forms of advertising were much more local. Market traders shouted out what they had for sale and large signs <span class="blank" data-q="24">24</span> displayed outside shops. Modern advertising began about 150 years ago, <span class="blank" data-q="25">25</span> factories started producing goods <span class="blank" data-q="26">26</span> large quantities. Before long, advertisements for a wide <span class="blank" data-q="27">27</span> of products appeared in national newspapers.<br><br>Nowadays, we see many different <span class="blank" data-q="28">28</span> of advertisements. They can appear on the sides of vehicles and on the clothes we wear as well as on television and radio. But the <span class="blank" data-q="29">29</span> of all advertisements is the same. They try to <span class="blank" data-q="30">30</span> our attention and get us to buy a particular product.</div>
+      <div class="answer-col">
+        <table>
+          <tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th></tr>
+          <tr data-q="21"><td>21</td><td><label><input type="radio" name="t19_21" value="A"> says</label></td><td><label><input type="radio" name="t19_21" value="B"> tells</label></td><td><label><input type="radio" name="t19_21" value="C"> indicates</label></td><td><label><input type="radio" name="t19_21" value="D"> announces</label></td></tr>
+          <tr data-q="22"><td>22</td><td><label><input type="radio" name="t19_22" value="A"> persuades</label></td><td><label><input type="radio" name="t19_22" value="B"> approves</label></td><td><label><input type="radio" name="t19_22" value="C"> suggests</label></td><td><label><input type="radio" name="t19_22" value="D"> wins</label></td></tr>
+          <tr data-q="23"><td>23</td><td><label><input type="radio" name="t19_23" value="A"> arrive</label></td><td><label><input type="radio" name="t19_23" value="B"> pass</label></td><td><label><input type="radio" name="t19_23" value="C"> reach</label></td><td><label><input type="radio" name="t19_23" value="D"> spread</label></td></tr>
+          <tr data-q="24"><td>24</td><td><label><input type="radio" name="t19_24" value="A"> had</label></td><td><label><input type="radio" name="t19_24" value="B"> are</label></td><td><label><input type="radio" name="t19_24" value="C"> has</label></td><td><label><input type="radio" name="t19_24" value="D"> were</label></td></tr>
+          <tr data-q="25"><td>25</td><td><label><input type="radio" name="t19_25" value="A"> when</label></td><td><label><input type="radio" name="t19_25" value="B"> which</label></td><td><label><input type="radio" name="t19_25" value="C"> why</label></td><td><label><input type="radio" name="t19_25" value="D"> whether</label></td></tr>
+          <tr data-q="26"><td>26</td><td><label><input type="radio" name="t19_26" value="A"> at</label></td><td><label><input type="radio" name="t19_26" value="B"> in</label></td><td><label><input type="radio" name="t19_26" value="C"> for</label></td><td><label><input type="radio" name="t19_26" value="D"> by</label></td></tr>
+          <tr data-q="27"><td>27</td><td><label><input type="radio" name="t19_27" value="A"> pack</label></td><td><label><input type="radio" name="t19_27" value="B"> row</label></td><td><label><input type="radio" name="t19_27" value="C"> range</label></td><td><label><input type="radio" name="t19_27" value="D"> area</label></td></tr>
+          <tr data-q="28"><td>28</td><td><label><input type="radio" name="t19_28" value="A"> ways</label></td><td><label><input type="radio" name="t19_28" value="B"> methods</label></td><td><label><input type="radio" name="t19_28" value="C"> systems</label></td><td><label><input type="radio" name="t19_28" value="D"> kinds</label></td></tr>
+          <tr data-q="29"><td>29</td><td><label><input type="radio" name="t19_29" value="A"> plan</label></td><td><label><input type="radio" name="t19_29" value="B"> aim</label></td><td><label><input type="radio" name="t19_29" value="C"> attempt</label></td><td><label><input type="radio" name="t19_29" value="D"> wish</label></td></tr>
+          <tr data-q="30"><td>30</td><td><label><input type="radio" name="t19_30" value="A"> attract</label></td><td><label><input type="radio" name="t19_30" value="B"> pull</label></td><td><label><input type="radio" name="t19_30" value="C"> achieve</label></td><td><label><input type="radio" name="t19_30" value="D"> bring</label></td></tr>
+        </table>
+      </div>
+    </div>
+    <div style="display:flex; flex-wrap:wrap; align-items:center;">
+      <button class="check-btn" onclick="checkTest('test19')">✅ Kiểm tra</button>
+      <button class="toggle-btn" onclick="toggleAnsKey('key19')">🔑 Đáp án</button>
+      <button class="toggle-btn" onclick="toggleVi('vi19')">🌐 Bản dịch</button>
+    </div>
+    <div id="key19" class="key-block hidden"><strong>21.B</strong> tells | <strong>22.A</strong> persuades | <strong>23.C</strong> reach | <strong>24.D</strong> were | <strong>25.A</strong> when | <strong>26.B</strong> in | <strong>27.C</strong> range | <strong>28.D</strong> kinds | <strong>29.B</strong> aim | <strong>30.A</strong> attract</div>
+    <div id="vi19" class="vi-box hidden">Khi một công ty muốn tăng doanh số bán một sản phẩm, họ sẽ quảng cáo. Một mẫu quảng cáo (21) cho chúng ta biết những sản phẩm nào có sẵn và nó cũng (22) thuyết phục chúng ta mua một sản phẩm cụ thể.<br><br>Quảng cáo truyền hình ngày nay (23) tiếp cận hàng triệu người, nhưng những hình thức quảng cáo đầu tiên lại mang tính địa phương hơn nhiều. Những người buôn bán ở chợ hét to những gì họ có để bán và những tấm biển lớn (24) được trưng bày bên ngoài các cửa hàng. Quảng cáo hiện đại bắt đầu khoảng 150 năm trước, (25) khi các nhà máy bắt đầu sản xuất hàng hóa (26) với số lượng lớn. Chẳng bao lâu sau, quảng cáo cho nhiều (27) loại sản phẩm đã xuất hiện trên các tờ báo quốc gia.<br><br>Ngày nay, chúng ta thấy nhiều (28) kiểu quảng cáo khác nhau. Chúng có thể xuất hiện bên hông xe cộ, trên quần áo chúng ta mặc cũng như trên truyền hình và radio. Nhưng (29) mục đích của tất cả các quảng cáo thì giống nhau. Chúng cố gắng (30) thu hút sự chú ý của chúng ta và khiến chúng ta mua một sản phẩm cụ thể.</div>
+  </article>
+    <!-- TEST 20 -->
+  <article class="glass-card test-item" data-testid="test20">
+    <div class="test-header"><span class="test-badge">Test 20</span><h2 class="test-title">FREE AIR TRAVEL</h2></div>
+    <div class="two-col">
+      <div class="passage-box">Most people know that there are many kinds of birds <span class="blank" data-q="21">21</span> fly long distances every spring and autumn. This activity is known <span class="blank" data-q="22">22</span> 'migration'. Scientists know <span class="blank" data-q="23">23</span> about where the birds fly to, and why they do it, <span class="blank" data-q="24">24</span> there are still different <span class="blank" data-q="25">25</span> about exactly how the birds <span class="blank" data-q="26">26</span> to find their way back to same places every year.<br><br>Birds travel between the areas where they can depend <span class="blank" data-q="27">27</span> the best food supply in winter, and the places where their young are born. The number of birds making these journeys every year is <span class="blank" data-q="28">28</span> big that their routes are called 'flyways', and the distances travelled <span class="blank" data-q="29">29</span> be amazing: there is one bird, only 350mm <span class="blank" data-q="30">30</span> length, which in its lifetime probably travels almost a million kilometres.</div>
+      <div class="answer-col">
+        <table>
+          <tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th></tr>
+          <tr data-q="21"><td>21</td><td><label><input type="radio" name="t20_21" value="A"> what</label></td><td><label><input type="radio" name="t20_21" value="B"> where</label></td><td><label><input type="radio" name="t20_21" value="C"> which</label></td><td><label><input type="radio" name="t20_21" value="D"> who</label></td></tr>
+          <tr data-q="22"><td>22</td><td><label><input type="radio" name="t20_22" value="A"> as</label></td><td><label><input type="radio" name="t20_22" value="B"> to</label></td><td><label><input type="radio" name="t20_22" value="C"> with</label></td><td><label><input type="radio" name="t20_22" value="D"> like</label></td></tr>
+          <tr data-q="23"><td>23</td><td><label><input type="radio" name="t20_23" value="A"> many</label></td><td><label><input type="radio" name="t20_23" value="B"> lot</label></td><td><label><input type="radio" name="t20_23" value="C"> some</label></td><td><label><input type="radio" name="t20_23" value="D"> plenty</label></td></tr>
+          <tr data-q="24"><td>24</td><td><label><input type="radio" name="t20_24" value="A"> so</label></td><td><label><input type="radio" name="t20_24" value="B"> because</label></td><td><label><input type="radio" name="t20_24" value="C"> although</label></td><td><label><input type="radio" name="t20_24" value="D"> since</label></td></tr>
+          <tr data-q="25"><td>25</td><td><label><input type="radio" name="t20_25" value="A"> opinions</label></td><td><label><input type="radio" name="t20_25" value="B"> decisions</label></td><td><label><input type="radio" name="t20_25" value="C"> meanings</label></td><td><label><input type="radio" name="t20_25" value="D"> minds</label></td></tr>
+          <tr data-q="26"><td>26</td><td><label><input type="radio" name="t20_26" value="A"> agree</label></td><td><label><input type="radio" name="t20_26" value="B"> succeed</label></td><td><label><input type="radio" name="t20_26" value="C"> can</label></td><td><label><input type="radio" name="t20_26" value="D"> manage</label></td></tr>
+          <tr data-q="27"><td>27</td><td><label><input type="radio" name="t20_27" value="A"> from</label></td><td><label><input type="radio" name="t20_27" value="B"> on</label></td><td><label><input type="radio" name="t20_27" value="C"> of</label></td><td><label><input type="radio" name="t20_27" value="D"> for</label></td></tr>
+          <tr data-q="28"><td>28</td><td><label><input type="radio" name="t20_28" value="A"> so</label></td><td><label><input type="radio" name="t20_28" value="B"> such</label></td><td><label><input type="radio" name="t20_28" value="C"> very</label></td><td><label><input type="radio" name="t20_28" value="D"> more</label></td></tr>
+          <tr data-q="29"><td>29</td><td><label><input type="radio" name="t20_29" value="A"> ought</label></td><td><label><input type="radio" name="t20_29" value="B"> can</label></td><td><label><input type="radio" name="t20_29" value="C"> should</label></td><td><label><input type="radio" name="t20_29" value="D"> could</label></td></tr>
+          <tr data-q="30"><td>30</td><td><label><input type="radio" name="t20_30" value="A"> in</label></td><td><label><input type="radio" name="t20_30" value="B"> over</label></td><td><label><input type="radio" name="t20_30" value="C"> by</label></td><td><label><input type="radio" name="t20_30" value="D"> at</label></td></tr>
+        </table>
+      </div>
+    </div>
+    <div style="display:flex; flex-wrap:wrap; align-items:center;">
+      <button class="check-btn" onclick="checkTest('test20')">✅ Kiểm tra</button>
+      <button class="toggle-btn" onclick="toggleAnsKey('key20')">🔑 Đáp án</button>
+      <button class="toggle-btn" onclick="toggleVi('vi20')">🌐 Bản dịch</button>
+    </div>
+    <div id="key20" class="key-block hidden"><strong>21.C</strong> which | <strong>22.A</strong> as | <strong>23.B</strong> lot | <strong>24.C</strong> although | <strong>25.A</strong> opinions | <strong>26.D</strong> manage | <strong>27.B</strong> on | <strong>28.A</strong> so | <strong>29.D</strong> can | <strong>30.A</strong> in</div>
+    <div id="vi20" class="vi-box hidden">Hầu hết mọi người đều biết có nhiều loài chim (21) bay quãng đường dài mỗi mùa xuân và mùa thu. Hoạt động này được biết đến (22) là 'di cư'. Các nhà khoa học đã biết (23) nhiều về nơi lũ chim bay đến, và tại sao chúng làm vậy, (24) mặc dù vẫn còn những (25) ý kiến khác nhau về chính xác cách lũ chim (26) xoay sở để tìm đường quay lại cùng những nơi đó mỗi năm.<br><br>Chim di chuyển giữa những khu vực mà chúng có thể phụ thuộc (27) vào nguồn thức ăn tốt nhất vào mùa đông, và những nơi chim non được sinh ra. Số lượng chim thực hiện những hành trình này mỗi năm (28) lớn đến nỗi các tuyến đường của chúng được gọi là 'đường bay', và những khoảng cách di chuyển (29) có thể thật đáng kinh ngạc: có một loài chim, chỉ dài 350mm (30) chiều dài, mà trong suốt cuộc đời mình có lẽ đã bay gần một triệu kilômét.</div>
+  </article>
+  
+  <!-- TEST 21 -->
+  <article class="glass-card test-item" data-testid="test21">
+    <div class="test-header"><span class="test-badge">Test 21</span><h2 class="test-title">WEATHER</h2></div>
+    <div class="two-col">
+      <div class="passage-box">Weather influences the lives of everyone. The climate of any country depends on its position on Earth, its <span class="blank" data-q="21">21</span> from the sea and how high it is. In countries which have sea all <span class="blank" data-q="22">22</span> them, like Britain and New Zealand, winters are mild, and summers are cool. There is not a huge change from one season to <span class="blank" data-q="23">23</span>.<br><br>Countries near the Equator have hot weather all year with some <span class="blank" data-q="24">24</span> rain, except in deserts where it rains <span class="blank" data-q="25">25</span> little. Above the desert there are no clouds in the sky, so the <span class="blank" data-q="26">26</span> of the sun can easily warm the ground during the day, but it gets very cold at night.<br><br>People are always <span class="blank" data-q="27">27</span> in unusual weather and pictures of tornadoes, for example, are shown on television. Strong winds and rain can <span class="blank" data-q="28">28</span> a lot of damage to buildings, and in spite of modern <span class="blank" data-q="29">29</span> of weather forecasting they can <span class="blank" data-q="30">30</span> surprise us.</div>
+      <div class="answer-col">
+        <table>
+          <tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th></tr>
+          <tr data-q="21"><td>21</td><td><label><input type="radio" name="t21_21" value="A"> distance</label></td><td><label><input type="radio" name="t21_21" value="B"> space</label></td><td><label><input type="radio" name="t21_21" value="C"> depth</label></td><td><label><input type="radio" name="t21_21" value="D"> length</label></td></tr>
+          <tr data-q="22"><td>22</td><td><label><input type="radio" name="t21_22" value="A"> through</label></td><td><label><input type="radio" name="t21_22" value="B"> beside</label></td><td><label><input type="radio" name="t21_22" value="C"> around</label></td><td><label><input type="radio" name="t21_22" value="D"> near</label></td></tr>
+          <tr data-q="23"><td>23</td><td><label><input type="radio" name="t21_23" value="A"> next</label></td><td><label><input type="radio" name="t21_23" value="B"> another</label></td><td><label><input type="radio" name="t21_23" value="C"> later</label></td><td><label><input type="radio" name="t21_23" value="D"> other</label></td></tr>
+          <tr data-q="24"><td>24</td><td><label><input type="radio" name="t21_24" value="A"> thick</label></td><td><label><input type="radio" name="t21_24" value="B"> large</label></td><td><label><input type="radio" name="t21_24" value="C"> heavy</label></td><td><label><input type="radio" name="t21_24" value="D"> great</label></td></tr>
+          <tr data-q="25"><td>25</td><td><label><input type="radio" name="t21_25" value="A"> not</label></td><td><label><input type="radio" name="t21_25" value="B"> quite</label></td><td><label><input type="radio" name="t21_25" value="C"> more</label></td><td><label><input type="radio" name="t21_25" value="D"> very</label></td></tr>
+          <tr data-q="26"><td>26</td><td><label><input type="radio" name="t21_26" value="A"> heat</label></td><td><label><input type="radio" name="t21_26" value="B"> fire</label></td><td><label><input type="radio" name="t21_26" value="C"> light</label></td><td><label><input type="radio" name="t21_26" value="D"> temperature</label></td></tr>
+          <tr data-q="27"><td>27</td><td><label><input type="radio" name="t21_27" value="A"> attracted</label></td><td><label><input type="radio" name="t21_27" value="B"> interested</label></td><td><label><input type="radio" name="t21_27" value="C"> keen</label></td><td><label><input type="radio" name="t21_27" value="D"> excited</label></td></tr>
+          <tr data-q="28"><td>28</td><td><label><input type="radio" name="t21_28" value="A"> make</label></td><td><label><input type="radio" name="t21_28" value="B"> happen</label></td><td><label><input type="radio" name="t21_28" value="C"> have</label></td><td><label><input type="radio" name="t21_28" value="D"> cause</label></td></tr>
+          <tr data-q="29"><td>29</td><td><label><input type="radio" name="t21_29" value="A"> jobs</label></td><td><label><input type="radio" name="t21_29" value="B"> tools</label></td><td><label><input type="radio" name="t21_29" value="C"> methods</label></td><td><label><input type="radio" name="t21_29" value="D"> plans</label></td></tr>
+          <tr data-q="30"><td>30</td><td><label><input type="radio" name="t21_30" value="A"> yet</label></td><td><label><input type="radio" name="t21_30" value="B"> still</label></td><td><label><input type="radio" name="t21_30" value="C"> already</label></td><td><label><input type="radio" name="t21_30" value="D"> ever</label></td></tr>
+        </table>
+      </div>
+    </div>
+    <div style="display:flex; flex-wrap:wrap; align-items:center;">
+      <button class="check-btn" onclick="checkTest('test21')">✅ Kiểm tra</button>
+      <button class="toggle-btn" onclick="toggleAnsKey('key21')">🔑 Đáp án</button>
+      <button class="toggle-btn" onclick="toggleVi('vi21')">🌐 Bản dịch</button>
+    </div>
+    <div id="key21" class="key-block hidden"><strong>21.A</strong> distance | <strong>22.C</strong> around | <strong>23.B</strong> another | <strong>24.C</strong> heavy | <strong>25.D</strong> very | <strong>26.A</strong> heat | <strong>27.B</strong> interested | <strong>28.D</strong> cause | <strong>29.C</strong> methods | <strong>30.B</strong> still</div>
+    <div id="vi21" class="vi-box hidden">Thời tiết ảnh hưởng đến cuộc sống của mọi người. Khí hậu của bất kỳ quốc gia nào phụ thuộc vào vị trí của nó trên Trái Đất, (21) khoảng cách từ biển và độ cao của nó. Ở những nước có biển bao quanh (22) như Anh và New Zealand, mùa đông ôn hòa, mùa hè mát mẻ. Không có sự thay đổi lớn từ mùa này sang mùa (23) khác.<br><br>Các nước gần Xích đạo có thời tiết nóng quanh năm với một số cơn mưa (24) lớn, ngoại trừ ở các sa mạc nơi trời mưa rất (25) ít. Phía trên sa mạc không có mây trên bầu trời, vì vậy (26) sức nóng của mặt trời có thể dễ dàng sưởi ấm mặt đất vào ban ngày, nhưng trời trở nên rất lạnh vào ban đêm.<br><br>Mọi người luôn (27) quan tâm đến thời tiết bất thường và những hình ảnh về lốc xoáy, ví dụ, được chiếu trên truyền hình. Gió mạnh và mưa có thể (28) gây ra nhiều thiệt hại cho các tòa nhà, và mặc dù có các (29) phương pháp dự báo thời tiết hiện đại, chúng vẫn (30) có thể khiến chúng ta bất ngờ.</div>
+  </article>
+  
+    <!-- TEST 22 -->
+  <article class="glass-card test-item" data-testid="test22">
+    <div class="test-header"><span class="test-badge">Test 22</span><h2 class="test-title">FASHIONS GO ROUND AND AROUND</h2></div>
+    <div class="two-col">
+      <div class="passage-box">Fashions have always changed with time. No doubt, Roman girls worried about having the latest hairstyle and boys in Ancient Egypt wanted to have sandals <span class="blank" data-q="21">21</span> were cool and not the sensible ones their mothers preferred.<br><br>Looking <span class="blank" data-q="22">22</span> over recent times, there seem to be two main differences in the <span class="blank" data-q="23">23</span> fashions have changed compared to earlier times. Firstly, <span class="blank" data-q="24">24</span> more people have a choice of clothes available to them. There are few places <span class="blank" data-q="25">25</span> the world where the trainers, the caps or the T-shirts of teenagers do not change from one year to the next. Secondly, styles are <span class="blank" data-q="26">26</span> within a much shorter time than they <span class="blank" data-q="27">27</span> to be. For instance, in the 1960s, <span class="blank" data-q="28">28</span> had the same low waists and narrow skirts as forty years before.<br><br>In the early years of the 21st century, the shops are <span class="blank" data-q="29">29</span> of long skirts and coloured scarves like the ones in fashion only thirty years before. Soon, we will find that the really fashionable people look no different from the <span class="blank" data-q="30">30</span> of us, because it is only ten years since their clothes were in fashion before!</div>
+      <div class="answer-col">
+        <table>
+          <tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th></tr>
+          <tr data-q="21"><td>21</td><td><label><input type="radio" name="t22_21" value="A"> they</label></td><td><label><input type="radio" name="t22_21" value="B"> that</label></td><td><label><input type="radio" name="t22_21" value="C"> these</label></td><td><label><input type="radio" name="t22_21" value="D"> those</label></td></tr>
+          <tr data-q="22"><td>22</td><td><label><input type="radio" name="t22_22" value="A"> about</label></td><td><label><input type="radio" name="t22_22" value="B"> around</label></td><td><label><input type="radio" name="t22_22" value="C"> back</label></td><td><label><input type="radio" name="t22_22" value="D"> behind</label></td></tr>
+          <tr data-q="23"><td>23</td><td><label><input type="radio" name="t22_23" value="A"> sort</label></td><td><label><input type="radio" name="t22_23" value="B"> kind</label></td><td><label><input type="radio" name="t22_23" value="C"> type</label></td><td><label><input type="radio" name="t22_23" value="D"> way</label></td></tr>
+          <tr data-q="24"><td>24</td><td><label><input type="radio" name="t22_24" value="A"> some</label></td><td><label><input type="radio" name="t22_24" value="B"> much</label></td><td><label><input type="radio" name="t22_24" value="C"> far</label></td><td><label><input type="radio" name="t22_24" value="D"> even</label></td></tr>
+          <tr data-q="25"><td>25</td><td><label><input type="radio" name="t22_25" value="A"> in</label></td><td><label><input type="radio" name="t22_25" value="B"> on</label></td><td><label><input type="radio" name="t22_25" value="C"> of</label></td><td><label><input type="radio" name="t22_25" value="D"> through</label></td></tr>
+          <tr data-q="26"><td>26</td><td><label><input type="radio" name="t22_26" value="A"> excepted</label></td><td><label><input type="radio" name="t22_26" value="B"> returned</label></td><td><label><input type="radio" name="t22_26" value="C"> exchanged</label></td><td><label><input type="radio" name="t22_26" value="D"> repeated</label></td></tr>
+          <tr data-q="27"><td>27</td><td><label><input type="radio" name="t22_27" value="A"> wanted</label></td><td><label><input type="radio" name="t22_27" value="B"> needed</label></td><td><label><input type="radio" name="t22_27" value="C"> used</label></td><td><label><input type="radio" name="t22_27" value="D"> had</label></td></tr>
+          <tr data-q="28"><td>28</td><td><label><input type="radio" name="t22_28" value="A"> dresses</label></td><td><label><input type="radio" name="t22_28" value="B"> jackets</label></td><td><label><input type="radio" name="t22_28" value="C"> trousers</label></td><td><label><input type="radio" name="t22_28" value="D"> blouses</label></td></tr>
+          <tr data-q="29"><td>29</td><td><label><input type="radio" name="t22_29" value="A"> filling</label></td><td><label><input type="radio" name="t22_29" value="B"> filled</label></td><td><label><input type="radio" name="t22_29" value="C"> full</label></td><td><label><input type="radio" name="t22_29" value="D"> fuller</label></td></tr>
+          <tr data-q="30"><td>30</td><td><label><input type="radio" name="t22_30" value="A"> other</label></td><td><label><input type="radio" name="t22_30" value="B"> most</label></td><td><label><input type="radio" name="t22_30" value="C"> rest</label></td><td><label><input type="radio" name="t22_30" value="D"> all</label></td></tr>
+        </table>
+      </div>
+    </div>
+    <div style="display:flex; flex-wrap:wrap; align-items:center;">
+      <button class="check-btn" onclick="checkTest('test22')">✅ Kiểm tra</button>
+      <button class="toggle-btn" onclick="toggleAnsKey('key22')">🔑 Đáp án</button>
+      <button class="toggle-btn" onclick="toggleVi('vi22')">🌐 Bản dịch</button>
+    </div>
+    <div id="key22" class="key-block hidden"><strong>21.B</strong> that | <strong>22.C</strong> back | <strong>23.D</strong> way | <strong>24.C</strong> far | <strong>25.A</strong> in | <strong>26.D</strong> repeated | <strong>27.C</strong> used | <strong>28.A</strong> dresses | <strong>29.C</strong> full | <strong>30.C</strong> rest</div>
+    <div id="vi22" class="vi-box hidden">Thời trang luôn thay đổi theo thời gian. Không nghi ngờ gì, các cô gái La Mã lo lắng về việc có kiểu tóc mới nhất và các chàng trai Ai Cập cổ đại muốn có những đôi dép (21) mà sành điệu chứ không phải những đôi thực dụng mà mẹ họ ưa thích.<br><br>Nhìn (22) lại những thời kỳ gần đây, dường như có hai sự khác biệt chính trong (23) cách thức thời trang thay đổi so với trước kia. Thứ nhất, (24) nhiều người hơn hẳn có nhiều lựa chọn quần áo hơn. Có rất ít nơi (25) trên thế giới mà giày thể thao, mũ lưỡi trai hay áo phông của thanh thiếu niên không thay đổi từ năm này sang năm khác. Thứ hai, các kiểu dáng được (26) lặp lại trong một khoảng thời gian ngắn hơn nhiều so với trước (27) đây. Ví dụ, vào những năm 1960, (28) váy đầm có cùng vòng eo thấp và váy bó như bốn mươi năm trước đó.<br><br>Vào những năm đầu thế kỷ 21, các cửa hàng (29) đầy ắp váy dài và khăn quàng cổ sặc sỡ giống như những món đồ thời trang chỉ mới ba mươi năm trước. Chẳng bao lâu nữa, chúng ta sẽ thấy rằng những người thực sự sành điệu trông chẳng khác gì (30) phần còn lại của chúng ta, bởi vì quần áo của họ mới chỉ mười năm trước đã từng là mốt!</div>
+  </article>
+  
+    <!-- TEST 23 -->
+  <article class="glass-card test-item" data-testid="test23">
+    <div class="test-header"><span class="test-badge">Test 23</span><h2 class="test-title">OLYMPIC HOPES</h2></div>
+    <div class="two-col">
+      <div class="passage-box">Yesterday Eleanor Preston won an international swimming competition for girls <span class="blank" data-q="21">21</span> under sixteen. She swam faster <span class="blank" data-q="22">22</span> girls from ten other countries. This <span class="blank" data-q="23">23</span> better when you learn that Eleanor is only thirteen. She had to have special <span class="blank" data-q="24">24</span> to enter because normally competitors are fourteen or older.<br><br>Eleanor has been <span class="blank" data-q="25">25</span> on swimming for a long time – <span class="blank" data-q="26">26</span> she was three in fact. I wondered whether she found it hard to <span class="blank" data-q="27">27</span> several hours a day training. She <span class="blank" data-q="28">28</span> me that sometimes she has problems finding time for homework, but that's all. "My parents have given up so <span class="blank" data-q="29">29</span> time driving me to local competitions. I think it's been harder for them, actually". Her aim is to swim at the Olympics.<br><br>After yesterday's performance, I think she may <span class="blank" data-q="30">30</span> there.</div>
+      <div class="answer-col">
+        <table>
+          <tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th></tr>
+          <tr data-q="21"><td>21</td><td><label><input type="radio" name="t23_21" value="A"> age</label></td><td><label><input type="radio" name="t23_21" value="B"> aged</label></td><td><label><input type="radio" name="t23_21" value="C"> ages</label></td><td><label><input type="radio" name="t23_21" value="D"> ageing</label></td></tr>
+          <tr data-q="22"><td>22</td><td><label><input type="radio" name="t23_22" value="A"> that</label></td><td><label><input type="radio" name="t23_22" value="B"> from</label></td><td><label><input type="radio" name="t23_22" value="C"> than</label></td><td><label><input type="radio" name="t23_22" value="D"> of</label></td></tr>
+          <tr data-q="23"><td>23</td><td><label><input type="radio" name="t23_23" value="A"> suggests</label></td><td><label><input type="radio" name="t23_23" value="B"> means</label></td><td><label><input type="radio" name="t23_23" value="C"> sounds</label></td><td><label><input type="radio" name="t23_23" value="D"> shows</label></td></tr>
+          <tr data-q="24"><td>24</td><td><label><input type="radio" name="t23_24" value="A"> permission</label></td><td><label><input type="radio" name="t23_24" value="B"> attention</label></td><td><label><input type="radio" name="t23_24" value="C"> opportunity</label></td><td><label><input type="radio" name="t23_24" value="D"> accommodation</label></td></tr>
+          <tr data-q="25"><td>25</td><td><label><input type="radio" name="t23_25" value="A"> happy</label></td><td><label><input type="radio" name="t23_25" value="B"> good</label></td><td><label><input type="radio" name="t23_25" value="C"> pleased</label></td><td><label><input type="radio" name="t23_25" value="D"> keen</label></td></tr>
+          <tr data-q="26"><td>26</td><td><label><input type="radio" name="t23_26" value="A"> until</label></td><td><label><input type="radio" name="t23_26" value="B"> since</label></td><td><label><input type="radio" name="t23_26" value="C"> when</label></td><td><label><input type="radio" name="t23_26" value="D"> ever</label></td></tr>
+          <tr data-q="27"><td>27</td><td><label><input type="radio" name="t23_27" value="A"> take</label></td><td><label><input type="radio" name="t23_27" value="B"> use</label></td><td><label><input type="radio" name="t23_27" value="C"> spend</label></td><td><label><input type="radio" name="t23_27" value="D"> pass</label></td></tr>
+          <tr data-q="28"><td>28</td><td><label><input type="radio" name="t23_28" value="A"> told</label></td><td><label><input type="radio" name="t23_28" value="B"> explained</label></td><td><label><input type="radio" name="t23_28" value="C"> said</label></td><td><label><input type="radio" name="t23_28" value="D"> agreed</label></td></tr>
+          <tr data-q="29"><td>29</td><td><label><input type="radio" name="t23_29" value="A"> often</label></td><td><label><input type="radio" name="t23_29" value="B"> much</label></td><td><label><input type="radio" name="t23_29" value="C"> long</label></td><td><label><input type="radio" name="t23_29" value="D"> many</label></td></tr>
+          <tr data-q="30"><td>30</td><td><label><input type="radio" name="t23_30" value="A"> reach</label></td><td><label><input type="radio" name="t23_30" value="B"> find</label></td><td><label><input type="radio" name="t23_30" value="C"> get</label></td><td><label><input type="radio" name="t23_30" value="D"> make</label></td></tr>
+        </table>
+      </div>
+    </div>
+    <div style="display:flex; flex-wrap:wrap; align-items:center;">
+      <button class="check-btn" onclick="checkTest('test23')">✅ Kiểm tra</button>
+      <button class="toggle-btn" onclick="toggleAnsKey('key23')">🔑 Đáp án</button>
+      <button class="toggle-btn" onclick="toggleVi('vi23')">🌐 Bản dịch</button>
+    </div>
+    <div id="key23" class="key-block hidden"><strong>21.B</strong> aged | <strong>22.C</strong> than | <strong>23.C</strong> sounds | <strong>24.A</strong> permission | <strong>25.D</strong> keen | <strong>26.B</strong> since | <strong>27.C</strong> spend | <strong>28.A</strong> told | <strong>29.B</strong> much | <strong>30.C</strong> get</div>
+    <div id="vi23" class="vi-box hidden">Hôm qua Eleanor Preston đã giành chiến thắng trong một cuộc thi bơi quốc tế dành cho các cô gái (21) từ mười sáu tuổi trở xuống. Cô ấy bơi nhanh (22) hơn các cô gái từ mười quốc gia khác. Điều này (23) nghe còn ấn tượng hơn khi bạn biết rằng Eleanor mới chỉ mười ba tuổi. Cô ấy phải có (24) sự cho phép đặc biệt để tham gia vì thông thường các thí sinh phải từ mười bốn tuổi trở lên.<br><br>Eleanor đã (25) say mê bơi lội từ lâu – thực tế là (26) kể từ khi cô mới ba tuổi. Tôi tự hỏi liệu cô ấy có thấy khó khăn khi phải (27) dành ra vài giờ mỗi ngày để tập luyện hay không. Cô ấy (28) nói với tôi rằng đôi khi cô gặp khó khăn trong việc tìm thời gian làm bài tập về nhà, nhưng chỉ có vậy thôi. "Bố mẹ tôi đã dành quá (29) nhiều thời gian để đưa tôi đến các cuộc thi địa phương. Tôi nghĩ thực ra điều đó còn khó khăn hơn đối với họ." Mục tiêu của cô là được bơi tại Thế vận hội.<br><br>Sau màn trình diễn ngày hôm qua, tôi nghĩ cô ấy có thể (30) đạt được điều đó.</div>
+  </article>
+  
+    <!-- TEST 24 -->
+  <article class="glass-card test-item" data-testid="test24">
+    <div class="test-header"><span class="test-badge">Test 24</span><h2 class="test-title">TOMATOES – THE WHOLE TRUTH</h2></div>
+    <div class="two-col">
+      <div class="passage-box">Leading scientists have announced that tomatoes can be of great benefit <span class="blank" data-q="21">21</span> our health. A lot of research has been <span class="blank" data-q="22">22</span> out in recent years. It's the whole tomato <span class="blank" data-q="23">23</span> may lower cancer risks, not individual compounds, <span class="blank" data-q="24">24</span> to new research. Experts have discovered that taking the antioxidant lycopene – <span class="blank" data-q="25">25</span> is found in tomatoes, but is increasingly popular <span class="blank" data-q="26">26</span> a health food supplement because of its link to a reduced risk of cancer – did not work as <span class="blank" data-q="27">27</span> as eating whole tomatoes. Scientists believe people <span class="blank" data-q="28">28</span> eat them in pastas, salads, tomato juice and pizza. Recent findings suggest that the risk <span class="blank" data-q="29">29</span> poor eating habits cannot be reversed with a pill. We shouldn't <span class="blank" data-q="30">30</span> easy solutions to a complex problem.</div>
+      <div class="answer-col">
+        <table>
+          <tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th></tr>
+          <tr data-q="21"><td>21</td><td><label><input type="radio" name="t24_21" value="A"> in</label></td><td><label><input type="radio" name="t24_21" value="B"> with</label></td><td><label><input type="radio" name="t24_21" value="C"> to</label></td><td><label><input type="radio" name="t24_21" value="D"> at</label></td></tr>
+          <tr data-q="22"><td>22</td><td><label><input type="radio" name="t24_22" value="A"> carried</label></td><td><label><input type="radio" name="t24_22" value="B"> taken</label></td><td><label><input type="radio" name="t24_22" value="C"> made</label></td><td><label><input type="radio" name="t24_22" value="D"> looked</label></td></tr>
+          <tr data-q="23"><td>23</td><td><label><input type="radio" name="t24_23" value="A"> who</label></td><td><label><input type="radio" name="t24_23" value="B"> where</label></td><td><label><input type="radio" name="t24_23" value="C"> whom</label></td><td><label><input type="radio" name="t24_23" value="D"> that</label></td></tr>
+          <tr data-q="24"><td>24</td><td><label><input type="radio" name="t24_24" value="A"> depending</label></td><td><label><input type="radio" name="t24_24" value="B"> suggesting</label></td><td><label><input type="radio" name="t24_24" value="C"> discussing</label></td><td><label><input type="radio" name="t24_24" value="D"> according</label></td></tr>
+          <tr data-q="25"><td>25</td><td><label><input type="radio" name="t24_25" value="A"> which</label></td><td><label><input type="radio" name="t24_25" value="B"> what</label></td><td><label><input type="radio" name="t24_25" value="C"> when</label></td><td><label><input type="radio" name="t24_25" value="D"> why</label></td></tr>
+          <tr data-q="26"><td>26</td><td><label><input type="radio" name="t24_26" value="A"> to</label></td><td><label><input type="radio" name="t24_26" value="B"> as</label></td><td><label><input type="radio" name="t24_26" value="C"> on</label></td><td><label><input type="radio" name="t24_26" value="D"> for</label></td></tr>
+          <tr data-q="27"><td>27</td><td><label><input type="radio" name="t24_27" value="A"> good</label></td><td><label><input type="radio" name="t24_27" value="B"> better</label></td><td><label><input type="radio" name="t24_27" value="C"> well</label></td><td><label><input type="radio" name="t24_27" value="D"> more</label></td></tr>
+          <tr data-q="28"><td>28</td><td><label><input type="radio" name="t24_28" value="A"> would</label></td><td><label><input type="radio" name="t24_28" value="B"> should</label></td><td><label><input type="radio" name="t24_28" value="C"> must</label></td><td><label><input type="radio" name="t24_28" value="D"> did</label></td></tr>
+          <tr data-q="29"><td>29</td><td><label><input type="radio" name="t24_29" value="A"> of</label></td><td><label><input type="radio" name="t24_29" value="B"> to</label></td><td><label><input type="radio" name="t24_29" value="C"> on</label></td><td><label><input type="radio" name="t24_29" value="D"> for</label></td></tr>
+          <tr data-q="30"><td>30</td><td><label><input type="radio" name="t24_30" value="A"> experience</label></td><td><label><input type="radio" name="t24_30" value="B"> direct</label></td><td><label><input type="radio" name="t24_30" value="C"> expect</label></td><td><label><input type="radio" name="t24_30" value="D"> inspect</label></td></tr>
+        </table>
+      </div>
+    </div>
+    <div style="display:flex; flex-wrap:wrap; align-items:center;">
+      <button class="check-btn" onclick="checkTest('test24')">✅ Kiểm tra</button>
+      <button class="toggle-btn" onclick="toggleAnsKey('key24')">🔑 Đáp án</button>
+      <button class="toggle-btn" onclick="toggleVi('vi24')">🌐 Bản dịch</button>
+    </div>
+    <div id="key24" class="key-block hidden"><strong>21.C</strong> to | <strong>22.A</strong> carried | <strong>23.D</strong> that | <strong>24.D</strong> according | <strong>25.A</strong> which | <strong>26.B</strong> as | <strong>27.C</strong> well | <strong>28.B</strong> should | <strong>29.A</strong> of | <strong>30.C</strong> expect</div>
+    <div id="vi24" class="vi-box hidden">Các nhà khoa học hàng đầu đã công bố rằng cà chua có thể mang lại lợi ích to lớn (21) cho sức khỏe của chúng ta. Rất nhiều nghiên cứu đã được (22) tiến hành trong những năm gần đây. Chính quả cà chua nguyên vẹn (23) mới có thể làm giảm nguy cơ ung thư, chứ không phải các hợp chất riêng lẻ, (24) theo như nghiên cứu mới. Các chuyên gia đã phát hiện ra rằng việc dùng chất chống oxy hóa lycopene – (25) chất được tìm thấy trong cà chua, nhưng ngày càng phổ biến (26) như một loại thực phẩm chức năng vì mối liên hệ của nó với việc giảm nguy cơ ung thư – không có tác dụng (27) tốt bằng việc ăn cả quả cà chua. Các nhà khoa học tin rằng mọi người (28) nên ăn chúng trong mì ống, xà lách, nước ép cà chua và pizza. Những phát hiện gần đây cho thấy rằng nguy cơ (29) từ thói quen ăn uống kém lành mạnh không thể được đảo ngược chỉ bằng một viên thuốc. Chúng ta không nên (30) kỳ vọng những giải pháp dễ dàng cho một vấn đề phức tạp.</div>
+  </article>
+  
+    <!-- TEST 25 -->
+  <article class="glass-card test-item" data-testid="test25">
+    <div class="test-header"><span class="test-badge">Test 25</span><h2 class="test-title">WE ALL NEED A GOOD NIGHT'S SLEEP</h2></div>
+    <div class="two-col">
+      <div class="passage-box">According to the Sleep Council, 20 million people in the UK aren't <span class="blank" data-q="21">21</span> enough sleep – and some experts know that "sleep debt" can impair your metabolism and disrupt hormone levels. To <span class="blank" data-q="22">22</span> out how <span class="blank" data-q="23">23</span> you need, says sleep expert Professor Chris Idzikowski, director of the Sleep Assessment and Advisory Service, <span class="blank" data-q="24">24</span> your alarm for when you <span class="blank" data-q="25">25</span> to get up, then count back six to eight hours, <span class="blank" data-q="26">26</span> on how much shut-eye you feel you need. Try to go to bed at this time every night and get up at the same time – even at weekends. If you <span class="blank" data-q="27">27</span> feel tired during the day, go to bed earlier by 15 minutes a week until you wake up refreshed. So, if you <span class="blank" data-q="28">28</span> go to bed at 11 pm, say, go at 10.45pm for a week. If you're still tired, try going at 10.30 the <span class="blank" data-q="29">29</span> week, and so on. Remember, too: a weekend afternoon nap can help <span class="blank" data-q="30">30</span> up for any missed hours in the week.</div>
+      <div class="answer-col">
+        <table>
+          <tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th></tr>
+          <tr data-q="21"><td>21</td><td><label><input type="radio" name="t25_21" value="A"> making</label></td><td><label><input type="radio" name="t25_21" value="B"> doing</label></td><td><label><input type="radio" name="t25_21" value="C"> getting</label></td><td><label><input type="radio" name="t25_21" value="D"> taking</label></td></tr>
+          <tr data-q="22"><td>22</td><td><label><input type="radio" name="t25_22" value="A"> work</label></td><td><label><input type="radio" name="t25_22" value="B"> put</label></td><td><label><input type="radio" name="t25_22" value="C"> let</label></td><td><label><input type="radio" name="t25_22" value="D"> take</label></td></tr>
+          <tr data-q="23"><td>23</td><td><label><input type="radio" name="t25_23" value="A"> many</label></td><td><label><input type="radio" name="t25_23" value="B"> much</label></td><td><label><input type="radio" name="t25_23" value="C"> some</label></td><td><label><input type="radio" name="t25_23" value="D"> lots</label></td></tr>
+          <tr data-q="24"><td>24</td><td><label><input type="radio" name="t25_24" value="A"> place</label></td><td><label><input type="radio" name="t25_24" value="B"> set</label></td><td><label><input type="radio" name="t25_24" value="C"> make</label></td><td><label><input type="radio" name="t25_24" value="D"> locate</label></td></tr>
+          <tr data-q="25"><td>25</td><td><label><input type="radio" name="t25_25" value="A"> need</label></td><td><label><input type="radio" name="t25_25" value="B"> like</label></td><td><label><input type="radio" name="t25_25" value="C"> should</label></td><td><label><input type="radio" name="t25_25" value="D"> would</label></td></tr>
+          <tr data-q="26"><td>26</td><td><label><input type="radio" name="t25_26" value="A"> counting</label></td><td><label><input type="radio" name="t25_26" value="B"> relying</label></td><td><label><input type="radio" name="t25_26" value="C"> needing</label></td><td><label><input type="radio" name="t25_26" value="D"> depending</label></td></tr>
+          <tr data-q="27"><td>27</td><td><label><input type="radio" name="t25_27" value="A"> yet</label></td><td><label><input type="radio" name="t25_27" value="B"> but</label></td><td><label><input type="radio" name="t25_27" value="C"> never</label></td><td><label><input type="radio" name="t25_27" value="D"> still</label></td></tr>
+          <tr data-q="28"><td>28</td><td><label><input type="radio" name="t25_28" value="A"> gradually</label></td><td><label><input type="radio" name="t25_28" value="B"> remarkably</label></td><td><label><input type="radio" name="t25_28" value="C"> normally</label></td><td><label><input type="radio" name="t25_28" value="D"> definitely</label></td></tr>
+          <tr data-q="29"><td>29</td><td><label><input type="radio" name="t25_29" value="A"> previous</label></td><td><label><input type="radio" name="t25_29" value="B"> last</label></td><td><label><input type="radio" name="t25_29" value="C"> following</label></td><td><label><input type="radio" name="t25_29" value="D"> formally</label></td></tr>
+          <tr data-q="30"><td>30</td><td><label><input type="radio" name="t25_30" value="A"> do</label></td><td><label><input type="radio" name="t25_30" value="B"> make</label></td><td><label><input type="radio" name="t25_30" value="C"> keep</label></td><td><label><input type="radio" name="t25_30" value="D"> put</label></td></tr>
+        </table>
+      </div>
+    </div>
+    <div style="display:flex; flex-wrap:wrap; align-items:center;">
+      <button class="check-btn" onclick="checkTest('test25')">✅ Kiểm tra</button>
+      <button class="toggle-btn" onclick="toggleAnsKey('key25')">🔑 Đáp án</button>
+      <button class="toggle-btn" onclick="toggleVi('vi25')">🌐 Bản dịch</button>
+    </div>
+    <div id="key25" class="key-block hidden"><strong>21.C</strong> getting | <strong>22.A</strong> work | <strong>23.B</strong> much | <strong>24.B</strong> set | <strong>25.A</strong> need | <strong>26.D</strong> depending | <strong>27.D</strong> still | <strong>28.C</strong> normally | <strong>29.C</strong> following | <strong>30.B</strong> make</div>
+    <div id="vi25" class="vi-box hidden">Theo Hội đồng Giấc ngủ, 20 triệu người ở Anh không (21) có được giấc ngủ đủ – và một số chuyên gia biết rằng "nợ ngủ" có thể làm suy giảm quá trình trao đổi chất và phá vỡ nồng độ hormone. Để (22) tìm ra bạn cần ngủ bao (23) nhiêu, chuyên gia về giấc ngủ, Giáo sư Chris Idzikowski, giám đốc Dịch vụ Đánh giá và Tư vấn Giấc ngủ, nói rằng hãy (24) đặt đồng hồ báo thức vào lúc bạn (25) cần thức dậy, sau đó đếm ngược lại sáu đến tám tiếng, (26) tùy thuộc vào cảm giác bạn cần ngủ bao nhiêu. Hãy cố gắng đi ngủ vào giờ này mỗi đêm và thức dậy vào cùng một giờ – ngay cả vào cuối tuần. Nếu bạn (27) vẫn cảm thấy mệt mỏi vào ban ngày, hãy đi ngủ sớm hơn 15 phút mỗi tuần cho đến khi bạn thức dậy sảng khoái. Vì vậy, nếu bạn (28) thường đi ngủ lúc 23 giờ, chẳng hạn, hãy đi ngủ lúc 22:45 trong một tuần. Nếu bạn vẫn mệt, hãy thử đi ngủ lúc 22:30 vào tuần (29) tiếp theo, và cứ thế. Cũng nên nhớ rằng: một giấc ngủ trưa vào cuối tuần có thể giúp (30) bù đắp cho bất kỳ giờ ngủ nào bị bỏ lỡ trong tuần.</div>
+  </article>
+    <!-- ========== TEST 1 ========== -->
+  <article class="glass-card test-item" data-testid="test1">
+    <div class="test-header"><span class="test-badge">Test 1</span><h2 class="test-title">MAKING HONEY</h2></div>
+    <div class="two-col">
+      <div class="passage-box">Do you like honey? Honey is a product, and it is made <span class="blank" data-q="21">21</span> honey bees. It has a special sweet flavour, <span class="blank" data-q="22">22</span> some people prefer to ordinary sugar. Sometimes, it is even possible to <span class="blank" data-q="23">23</span> from the flavour what kind of flowers the bees <span class="blank" data-q="24">24</span> before producing the honey.<br><br>Have you ever <span class="blank" data-q="25">25</span> about how honey is produced? Beekeepers - people who look after bees - are very important in the making of honey. They <span class="blank" data-q="26">26</span> the bees in their care produce <span class="blank" data-q="27">27</span> honey than is needed. Then the honey can be removed <span class="blank" data-q="28">28</span> causing problems for the bees.<br><br>Honey collection is an ancient activity, <span class="blank" data-q="29">29</span> back at least 10,000 years, and honey has <span class="blank" data-q="30">30</span> increasingly popular nowadays as a healthy food.</div>
+      <div class="answer-col">
+        <table>
+          <tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th></tr>
+          <tr data-q="21"><td>21</td><td><label><input type="radio" name="t1_21" value="A"> by</label></td><td><label><input type="radio" name="t1_21" value="B"> from</label></td><td><label><input type="radio" name="t1_21" value="C"> with</label></td><td><label><input type="radio" name="t1_21" value="D"> of</label></td></tr>
+          <tr data-q="22"><td>22</td><td><label><input type="radio" name="t1_22" value="A"> which</label></td><td><label><input type="radio" name="t1_22" value="B"> who</label></td><td><label><input type="radio" name="t1_22" value="C"> what</label></td><td><label><input type="radio" name="t1_22" value="D"> whose</label></td></tr>
+          <tr data-q="23"><td>23</td><td><label><input type="radio" name="t1_23" value="A"> answer</label></td><td><label><input type="radio" name="t1_23" value="B"> take</label></td><td><label><input type="radio" name="t1_23" value="C"> inform</label></td><td><label><input type="radio" name="t1_23" value="D"> know</label></td></tr>
+          <tr data-q="24"><td>24</td><td><label><input type="radio" name="t1_24" value="A"> went</label></td><td><label><input type="radio" name="t1_24" value="B"> visited</label></td><td><label><input type="radio" name="t1_24" value="C"> met</label></td><td><label><input type="radio" name="t1_24" value="D"> passed</label></td></tr>
+          <tr data-q="25"><td>25</td><td><label><input type="radio" name="t1_25" value="A"> consider</label></td><td><label><input type="radio" name="t1_25" value="B"> guessed</label></td><td><label><input type="radio" name="t1_25" value="C"> wondered</label></td><td><label><input type="radio" name="t1_25" value="D"> doubted</label></td></tr>
+          <tr data-q="26"><td>26</td><td><label><input type="radio" name="t1_26" value="A"> let</label></td><td><label><input type="radio" name="t1_26" value="B"> cause</label></td><td><label><input type="radio" name="t1_26" value="C"> start</label></td><td><label><input type="radio" name="t1_26" value="D"> bring</label></td></tr>
+          <tr data-q="27"><td>27</td><td><label><input type="radio" name="t1_27" value="A"> much</label></td><td><label><input type="radio" name="t1_27" value="B"> many</label></td><td><label><input type="radio" name="t1_27" value="C"> most</label></td><td><label><input type="radio" name="t1_27" value="D"> more</label></td></tr>
+          <tr data-q="28"><td>28</td><td><label><input type="radio" name="t1_28" value="A"> without</label></td><td><label><input type="radio" name="t1_28" value="B"> although</label></td><td><label><input type="radio" name="t1_28" value="C"> instead</label></td><td><label><input type="radio" name="t1_28" value="D"> unless</label></td></tr>
+          <tr data-q="29"><td>29</td><td><label><input type="radio" name="t1_29" value="A"> coming</label></td><td><label><input type="radio" name="t1_29" value="B"> going</label></td><td><label><input type="radio" name="t1_29" value="C"> falling</label></td><td><label><input type="radio" name="t1_29" value="D"> moving</label></td></tr>
+          <tr data-q="30"><td>30</td><td><label><input type="radio" name="t1_30" value="A"> gone</label></td><td><label><input type="radio" name="t1_30" value="B"> turned</label></td><td><label><input type="radio" name="t1_30" value="C"> become</label></td><td><label><input type="radio" name="t1_30" value="D"> changed</label></td></tr>
+        </table>
+      </div>
+    </div>
+    <div style="display:flex; flex-wrap:wrap; align-items:center;">
+      <button class="check-btn" onclick="checkTest('test1')">✅ Kiểm tra</button>
+      <button class="toggle-btn" onclick="toggleAnsKey('key1')">🔑 Đáp án</button>
+      <button class="toggle-btn" onclick="toggleVi('vi1')">🌐 Bản dịch</button>
+    </div>
+    <div id="key1" class="key-block hidden"><strong>21.B</strong> from | <strong>22.A</strong> which | <strong>23.D</strong> know | <strong>24.B</strong> visited | <strong>25.C</strong> wondered | <strong>26.A</strong> let | <strong>27.D</strong> more | <strong>28.A</strong> without | <strong>29.B</strong> going | <strong>30.C</strong> become</div>
+    <div id="vi1" class="vi-box hidden">Bạn có thích mật ong không? Mật ong là một sản phẩm, và nó được tạo ra (21) từ ong mật. Nó có một hương vị ngọt ngào đặc biệt, (22) mà một số người thích hơn đường thông thường. Đôi khi, thậm chí có thể (23) biết được từ hương vị loại hoa mà những con ong (24) đã ghé thăm trước khi tạo ra mật ong.<br><br>Bạn đã bao giờ (25) tự hỏi về cách mật ong được sản xuất chưa? Người nuôi ong - những người chăm sóc ong - rất quan trọng trong việc tạo ra mật ong. Họ (26) để cho những con ong mà họ chăm sóc tạo ra (27) nhiều mật ong hơn mức cần thiết. Sau đó, mật ong có thể được lấy đi (28) mà không gây ra vấn đề gì cho những con ong.<br><br>Việc thu hoạch mật ong là một hoạt động cổ xưa, (29) có từ ít nhất 10.000 năm trước, và mật ong ngày càng trở nên (30) phổ biến ngày nay như một loại thực phẩm lành mạnh.</div>
+  </article>
+
+  <!-- ========== TEST 2 ========== -->
+  <article class="glass-card test-item" data-testid="test2">
+    <div class="test-header"><span class="test-badge">Test 2</span><h2 class="test-title">BIRTH OF MOVIES</h2></div>
+    <div class="two-col">
+      <div class="passage-box">Did you know that cinema is more than 100 years old? Moving pictures were invented by the brothers Louis and Auguste Lumière. The first showing of a moving picture or 'movie' <span class="blank" data-q="21">21</span> place in a cinema in Paris on 28th December 1895. On that day, the Lumière brothers showed movies <span class="blank" data-q="22">22</span> their newly-invented machine, called the Cinematograph. The audience saw a funny film in <span class="blank" data-q="23">23</span> a gardener spilt a lot of water on <span class="blank" data-q="24">24</span> by accident. Everyone really loved it!<br><br>Cinema very <span class="blank" data-q="25">25</span> became popular all over the world. In 1907 the first film studios were built in a <span class="blank" data-q="26">26</span> of Los Angeles called Hollywood. <span class="blank" data-q="27">27</span> the 1920s, Hollywood had become the centre of the world film <span class="blank" data-q="28">28</span>.<br><br>To begin with, the movies had no sound. Words <span class="blank" data-q="29">29</span> on the screen from time to time to <span class="blank" data-q="30">30</span> the story.</div>
+      <div class="answer-col">
+        <table>
+          <tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th></tr>
+          <tr data-q="21"><td>21</td><td><label><input type="radio" name="t2_21" value="A"> found</label></td><td><label><input type="radio" name="t2_21" value="B"> took</label></td><td><label><input type="radio" name="t2_21" value="C"> went</label></td><td><label><input type="radio" name="t2_21" value="D"> gave</label></td></tr>
+          <tr data-q="22"><td>22</td><td><label><input type="radio" name="t2_22" value="A"> using</label></td><td><label><input type="radio" name="t2_22" value="B"> making</label></td><td><label><input type="radio" name="t2_22" value="C"> setting</label></td><td><label><input type="radio" name="t2_22" value="D"> doing</label></td></tr>
+          <tr data-q="23"><td>23</td><td><label><input type="radio" name="t2_23" value="A"> what</label></td><td><label><input type="radio" name="t2_23" value="B"> who</label></td><td><label><input type="radio" name="t2_23" value="C"> where</label></td><td><label><input type="radio" name="t2_23" value="D"> which</label></td></tr>
+          <tr data-q="24"><td>24</td><td><label><input type="radio" name="t2_24" value="A"> themselves</label></td><td><label><input type="radio" name="t2_24" value="B"> yourself</label></td><td><label><input type="radio" name="t2_24" value="C"> himself</label></td><td><label><input type="radio" name="t2_24" value="D"> itself</label></td></tr>
+          <tr data-q="25"><td>25</td><td><label><input type="radio" name="t2_25" value="A"> immediately</label></td><td><label><input type="radio" name="t2_25" value="B"> quickly</label></td><td><label><input type="radio" name="t2_25" value="C"> fast</label></td><td><label><input type="radio" name="t2_25" value="D"> early</label></td></tr>
+          <tr data-q="26"><td>26</td><td><label><input type="radio" name="t2_26" value="A"> district</label></td><td><label><input type="radio" name="t2_26" value="B"> site</label></td><td><label><input type="radio" name="t2_26" value="C"> location</label></td><td><label><input type="radio" name="t2_26" value="D"> place</label></td></tr>
+          <tr data-q="27"><td>27</td><td><label><input type="radio" name="t2_27" value="A"> To</label></td><td><label><input type="radio" name="t2_27" value="B"> At</label></td><td><label><input type="radio" name="t2_27" value="C"> For</label></td><td><label><input type="radio" name="t2_27" value="D"> By</label></td></tr>
+          <tr data-q="28"><td>28</td><td><label><input type="radio" name="t2_28" value="A"> trade</label></td><td><label><input type="radio" name="t2_28" value="B"> company</label></td><td><label><input type="radio" name="t2_28" value="C"> industry</label></td><td><label><input type="radio" name="t2_28" value="D"> firm</label></td></tr>
+          <tr data-q="29"><td>29</td><td><label><input type="radio" name="t2_29" value="A"> happened</label></td><td><label><input type="radio" name="t2_29" value="B"> appeared</label></td><td><label><input type="radio" name="t2_29" value="C"> developed</label></td><td><label><input type="radio" name="t2_29" value="D"> displayed</label></td></tr>
+          <tr data-q="30"><td>30</td><td><label><input type="radio" name="t2_30" value="A"> explain</label></td><td><label><input type="radio" name="t2_30" value="B"> prove</label></td><td><label><input type="radio" name="t2_30" value="C"> direct</label></td><td><label><input type="radio" name="t2_30" value="D"> advise</label></td></tr>
+        </table>
+      </div>
+    </div>
+    <div style="display:flex; flex-wrap:wrap; align-items:center;">
+      <button class="check-btn" onclick="checkTest('test2')">✅ Kiểm tra</button>
+      <button class="toggle-btn" onclick="toggleAnsKey('key2')">🔑 Đáp án</button>
+      <button class="toggle-btn" onclick="toggleVi('vi2')">🌐 Bản dịch</button>
+    </div>
+    <div id="key2" class="key-block hidden"><strong>21.B</strong> took | <strong>22.A</strong> using | <strong>23.D</strong> which | <strong>24.C</strong> himself | <strong>25.B</strong> quickly | <strong>26.A</strong> district | <strong>27.D</strong> By | <strong>28.C</strong> industry | <strong>29.B</strong> appeared | <strong>30.A</strong> explain</div>
+    <div id="vi2" class="vi-box hidden">Bạn có biết rằng điện ảnh đã hơn 100 năm tuổi? Phim ảnh chuyển động được phát minh bởi anh em nhà Louis và Auguste Lumière. Buổi trình chiếu đầu tiên của một bức ảnh chuyển động hay 'phim' đã (21) diễn ra tại một rạp chiếu phim ở Paris vào ngày 28 tháng 12 năm 1895. Vào ngày hôm đó, anh em nhà Lumière đã trình chiếu những bộ phim (22) bằng chiếc máy mới phát minh của họ, được gọi là Máy quay phim. Khán giả đã xem một bộ phim hài hước (23) trong đó một người làm vườn đã làm đổ rất nhiều nước lên (24) người mình một cách vô tình. Mọi người thực sự yêu thích nó!<br><br>Điện ảnh rất (25) nhanh chóng trở nên phổ biến trên toàn thế giới. Năm 1907, những xưởng phim đầu tiên được xây dựng tại một (26) quận của Los Angeles có tên là Hollywood. (27) Vào những năm 1920, Hollywood đã trở thành trung tâm của (28) ngành công nghiệp điện ảnh thế giới.<br><br>Ban đầu, những bộ phim không có âm thanh. Các dòng chữ (29) xuất hiện trên màn hình thỉnh thoảng để (30) giải thích câu chuyện.</div>
+  </article>
+  
+    <!-- ========== TEST 3 ========== -->
+  <article class="glass-card test-item" data-testid="test3">
+    <div class="test-header"><span class="test-badge">Test 3</span><h2 class="test-title">NEW OPPORTUNITIES WITH AN OPEN UNIVERSITY DEGREE</h2></div>
+    <div class="two-col">
+      <div class="passage-box">Like any other university, the Open University can give you a degree. However, you don't have to <span class="blank" data-q="21">21</span> working to study. It can also open up a whole variety <span class="blank" data-q="22">22</span> interests.<br><br>If you have <span class="blank" data-q="23">23</span> studied before, you will enjoy the special, new pleasure of <span class="blank" data-q="24">24</span> your knowledge. You will make friends of <span class="blank" data-q="25">25</span> kinds. You may also <span class="blank" data-q="26">26</span> that your qualification provides new career opportunities.<br><br>You don't actually <span class="blank" data-q="27">27</span> to the Open University for lectures, but study at home using television, radio and computer software. You can <span class="blank" data-q="28">28</span> one class a month if you wish at an Open University centre. Of course, there are exams to take, as in <span class="blank" data-q="29">29</span> university.<br><br>If you <span class="blank" data-q="30">30</span> like to know more, all you have to do is complete the form below. It could be the start of a wonderful new period in your life.</div>
+      <div class="answer-col">
+        <table>
+          <tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th></tr>
+          <tr data-q="21"><td>21</td><td><label><input type="radio" name="t3_21" value="A"> break</label></td><td><label><input type="radio" name="t3_21" value="B"> end</label></td><td><label><input type="radio" name="t3_21" value="C"> stop</label></td><td><label><input type="radio" name="t3_21" value="D"> leave</label></td></tr>
+          <tr data-q="22"><td>22</td><td><label><input type="radio" name="t3_22" value="A"> of</label></td><td><label><input type="radio" name="t3_22" value="B"> from</label></td><td><label><input type="radio" name="t3_22" value="C"> in</label></td><td><label><input type="radio" name="t3_22" value="D"> for</label></td></tr>
+          <tr data-q="23"><td>23</td><td><label><input type="radio" name="t3_23" value="A"> ever</label></td><td><label><input type="radio" name="t3_23" value="B"> never</label></td><td><label><input type="radio" name="t3_23" value="C"> often</label></td><td><label><input type="radio" name="t3_23" value="D"> always</label></td></tr>
+          <tr data-q="24"><td>24</td><td><label><input type="radio" name="t3_24" value="A"> growing</label></td><td><label><input type="radio" name="t3_24" value="B"> changing</label></td><td><label><input type="radio" name="t3_24" value="C"> adding</label></td><td><label><input type="radio" name="t3_24" value="D"> increasing</label></td></tr>
+          <tr data-q="25"><td>25</td><td><label><input type="radio" name="t3_25" value="A"> all</label></td><td><label><input type="radio" name="t3_25" value="B"> each</label></td><td><label><input type="radio" name="t3_25" value="C"> both</label></td><td><label><input type="radio" name="t3_25" value="D"> every</label></td></tr>
+          <tr data-q="26"><td>26</td><td><label><input type="radio" name="t3_26" value="A"> wish</label></td><td><label><input type="radio" name="t3_26" value="B"> suggest</label></td><td><label><input type="radio" name="t3_26" value="C"> find</label></td><td><label><input type="radio" name="t3_26" value="D"> want</label></td></tr>
+          <tr data-q="27"><td>27</td><td><label><input type="radio" name="t3_27" value="A"> go</label></td><td><label><input type="radio" name="t3_27" value="B"> join</label></td><td><label><input type="radio" name="t3_27" value="C"> enter</label></td><td><label><input type="radio" name="t3_27" value="D"> arrive</label></td></tr>
+          <tr data-q="28"><td>28</td><td><label><input type="radio" name="t3_28" value="A"> give</label></td><td><label><input type="radio" name="t3_28" value="B"> attend</label></td><td><label><input type="radio" name="t3_28" value="C"> learn</label></td><td><label><input type="radio" name="t3_28" value="D"> study</label></td></tr>
+          <tr data-q="29"><td>29</td><td><label><input type="radio" name="t3_29" value="A"> most</label></td><td><label><input type="radio" name="t3_29" value="B"> some</label></td><td><label><input type="radio" name="t3_29" value="C"> many</label></td><td><label><input type="radio" name="t3_29" value="D"> any</label></td></tr>
+          <tr data-q="30"><td>30</td><td><label><input type="radio" name="t3_30" value="A"> would</label></td><td><label><input type="radio" name="t3_30" value="B"> did</label></td><td><label><input type="radio" name="t3_30" value="C"> will</label></td><td><label><input type="radio" name="t3_30" value="D"> can</label></td></tr>
+        </table>
+      </div>
+    </div>
+    <div style="display:flex; flex-wrap:wrap; align-items:center;">
+      <button class="check-btn" onclick="checkTest('test3')">✅ Kiểm tra</button>
+      <button class="toggle-btn" onclick="toggleAnsKey('key3')">🔑 Đáp án</button>
+      <button class="toggle-btn" onclick="toggleVi('vi3')">🌐 Bản dịch</button>
+    </div>
+    <div id="key3" class="key-block hidden"><strong>21.C</strong> stop | <strong>22.A</strong> of | <strong>23.B</strong> never | <strong>24.D</strong> increasing | <strong>25.A</strong> all | <strong>26.C</strong> find | <strong>27.A</strong> go | <strong>28.B</strong> attend | <strong>29.D</strong> any | <strong>30.A</strong> would</div>
+    <div id="vi3" class="vi-box hidden">Giống như bất kỳ trường đại học nào khác, Đại học Mở có thể cấp cho bạn một tấm bằng. Tuy nhiên, bạn không cần phải (21) ngừng làm việc để học. Nó cũng có thể mở ra cả một loạt (22) các sở thích.<br><br>Nếu bạn (23) chưa từng học trước đây, bạn sẽ tận hưởng niềm vui mới mẻ, đặc biệt của việc (24) tăng thêm kiến thức. Bạn sẽ kết bạn với (25) đủ mọi loại người. Bạn cũng có thể (26) nhận thấy rằng bằng cấp của bạn mang lại những cơ hội nghề nghiệp mới.<br><br>Bạn không thực sự (27) đến Đại học Mở để nghe giảng, mà học ở nhà bằng cách sử dụng truyền hình, radio và phần mềm máy tính. Bạn có thể (28) tham dự một lớp học mỗi tháng nếu muốn tại một trung tâm của Đại học Mở. Tất nhiên, có những kỳ thi phải tham gia, như ở (29) bất kỳ trường đại học nào.<br><br>Nếu bạn (30) muốn biết thêm, tất cả những gì bạn cần làm là điền vào mẫu dưới đây. Đó có thể là sự khởi đầu của một giai đoạn mới tuyệt vời trong cuộc đời bạn.</div>
+  </article>
+  
+    <!-- ========== TEST 4 ========== -->
+  <article class="glass-card test-item" data-testid="test4">
+    <div class="test-header"><span class="test-badge">Test 4</span><h2 class="test-title">LITTLE CAT, LITTLE CAT, WHERE HAVE YOU BEEN?</h2></div>
+    <div class="two-col">
+      <div class="passage-box">When Bo the cat decided to explore a furniture van, she had a bigger adventure than she expected. She was discovered <span class="blank" data-q="21">21</span> by the driver, after he had completed a <span class="blank" data-q="22">22</span> trip of over 500 kilometres. It was <span class="blank" data-q="23">23</span> the end of a long day. The driver and the cat were both hungry! He gave her some milk and started making enquiries. He telephoned his last <span class="blank" data-q="24">24</span> customers but they had not lost a cat. It was getting late, so he took Bo home for the night and <span class="blank" data-q="25">25</span> next morning delivered her to an animal hospital.<br><br>The cat's owner <span class="blank" data-q="26">26</span> done some detective work too. After <span class="blank" data-q="27">27</span> everywhere for the cat, he suddenly remembered the furniture van <span class="blank" data-q="28">28</span> which had made a delivery to a neighbour. Fortunately, he <span class="blank" data-q="29">29</span> remembered the name of the company. He called their office and in a short time Bo was <span class="blank" data-q="30">30</span> returned safely.</div>
+      <div class="answer-col">
+        <table>
+          <tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th></tr>
+          <tr data-q="21"><td>21</td><td><label><input type="radio" name="t4_21" value="A"> by</label></td><td><label><input type="radio" name="t4_21" value="B"> from</label></td><td><label><input type="radio" name="t4_21" value="C"> at</label></td><td><label><input type="radio" name="t4_21" value="D"> of</label></td></tr>
+          <tr data-q="22"><td>22</td><td><label><input type="radio" name="t4_22" value="A"> tour</label></td><td><label><input type="radio" name="t4_22" value="B"> visit</label></td><td><label><input type="radio" name="t4_22" value="C"> trip</label></td><td><label><input type="radio" name="t4_22" value="D"> travel</label></td></tr>
+          <tr data-q="23"><td>23</td><td><label><input type="radio" name="t4_23" value="A"> some</label></td><td><label><input type="radio" name="t4_23" value="B"> the</label></td><td><label><input type="radio" name="t4_23" value="C"> an</label></td><td><label><input type="radio" name="t4_23" value="D"> any</label></td></tr>
+          <tr data-q="24"><td>24</td><td><label><input type="radio" name="t4_24" value="A"> shoppers</label></td><td><label><input type="radio" name="t4_24" value="B"> buyers</label></td><td><label><input type="radio" name="t4_24" value="C"> callers</label></td><td><label><input type="radio" name="t4_24" value="D"> customers</label></td></tr>
+          <tr data-q="25"><td>25</td><td><label><input type="radio" name="t4_25" value="A"> next</label></td><td><label><input type="radio" name="t4_25" value="B"> following</label></td><td><label><input type="radio" name="t4_25" value="C"> tomorrow</label></td><td><label><input type="radio" name="t4_25" value="D"> other</label></td></tr>
+          <tr data-q="26"><td>26</td><td><label><input type="radio" name="t4_26" value="A"> has</label></td><td><label><input type="radio" name="t4_26" value="B"> is</label></td><td><label><input type="radio" name="t4_26" value="C"> had</label></td><td><label><input type="radio" name="t4_26" value="D"> was</label></td></tr>
+          <tr data-q="27"><td>27</td><td><label><input type="radio" name="t4_27" value="A"> spying</label></td><td><label><input type="radio" name="t4_27" value="B"> seeing</label></td><td><label><input type="radio" name="t4_27" value="C"> watching</label></td><td><label><input type="radio" name="t4_27" value="D"> searching</label></td></tr>
+          <tr data-q="28"><td>28</td><td><label><input type="radio" name="t4_28" value="A"> which</label></td><td><label><input type="radio" name="t4_28" value="B"> this</label></td><td><label><input type="radio" name="t4_28" value="C"> it</label></td><td><label><input type="radio" name="t4_28" value="D"> what</label></td></tr>
+          <tr data-q="29"><td>29</td><td><label><input type="radio" name="t4_29" value="A"> thought</label></td><td><label><input type="radio" name="t4_29" value="B"> remembered</label></td><td><label><input type="radio" name="t4_29" value="C"> saw</label></td><td><label><input type="radio" name="t4_29" value="D"> reminded</label></td></tr>
+          <tr data-q="30"><td>30</td><td><label><input type="radio" name="t4_30" value="A"> brought</label></td><td><label><input type="radio" name="t4_30" value="B"> given</label></td><td><label><input type="radio" name="t4_30" value="C"> returned</label></td><td><label><input type="radio" name="t4_30" value="D"> taken</label></td></tr>
+        </table>
+      </div>
+    </div>
+    <div style="display:flex; flex-wrap:wrap; align-items:center;">
+      <button class="check-btn" onclick="checkTest('test4')">✅ Kiểm tra</button>
+      <button class="toggle-btn" onclick="toggleAnsKey('key4')">🔑 Đáp án</button>
+      <button class="toggle-btn" onclick="toggleVi('vi4')">🌐 Bản dịch</button>
+    </div>
+    <div id="key4" class="key-block hidden"><strong>21.A</strong> by | <strong>22.C</strong> trip | <strong>23.B</strong> the | <strong>24.D</strong> customers | <strong>25.A</strong> next | <strong>26.C</strong> had | <strong>27.D</strong> searching | <strong>28.A</strong> which | <strong>29.B</strong> remembered | <strong>30.C</strong> returned</div>
+    <div id="vi4" class="vi-box hidden">Khi chú mèo Bo quyết định khám phá một chiếc xe tải chở đồ nội thất, cô ấy đã có một cuộc phiêu lưu lớn hơn mong đợi. Cô ấy được tài xế phát hiện (21) bởi, sau khi ông ấy đã hoàn thành một (22) chuyến đi dài hơn 500 km. Đó là (23) vào cuối một ngày dài. Người tài xế và chú mèo đều đói! Ông ấy cho cô ấy một ít sữa và bắt đầu tìm hiểu. Ông ấy gọi điện cho những (24) khách hàng cuối cùng của mình nhưng họ không bị mất mèo. Trời đã muộn, vì vậy ông ấy đưa Bo về nhà qua đêm và (25) sáng hôm sau giao cô ấy cho một bệnh viện thú y.<br><br>Chủ của chú mèo (26) cũng đã thực hiện một số công việc điều tra. Sau khi (27) tìm kiếm khắp nơi, ông ấy chợt nhớ ra chiếc xe tải đồ nội thất (28) mà đã giao hàng cho một người hàng xóm. May mắn thay, ông ấy (29) đã nhớ ra tên của công ty. Ông ấy gọi đến văn phòng của họ và chỉ trong một thời gian ngắn, Bo đã được (30) trả về an toàn.</div>
+  </article>
+  
+    <!-- ========== TEST 5 ========== -->
+  <article class="glass-card test-item" data-testid="test5">
+    <div class="test-header"><span class="test-badge">Test 5</span><h2 class="test-title">MONEY</h2></div>
+    <div class="two-col">
+      <div class="passage-box">What is money? The pound, the dollar or the euro are actually just like a gram or kilometer. The difference is that you can exchange money for something <span class="blank" data-q="21">21</span>. A ten pound note may buy a book, a huge bag of sweets, or a <span class="blank" data-q="22">22</span> of cinema tickets. But the note itself is only a printed <span class="blank" data-q="23">23</span> of paper which costs almost nothing to make. Thousands of years <span class="blank" data-q="24">24</span> people didn't have money as we know <span class="blank" data-q="25">25</span>. There were no banks <span class="blank" data-q="26">26</span> even shops. In those days, Mr. Green the farmer exchanged the corn he <span class="blank" data-q="27">27</span> grown for Mr. Hive's honey.<br><br>This was an exchange arranged between two <span class="blank" data-q="28">28</span>, each of whom had something that the other wanted. But in time, most societies invented their own currency <span class="blank" data-q="29">29</span> that people could exchange more. The different currencies began to join together, which is why <span class="blank" data-q="30">30</span> everyone uses the same currency in their country.</div>
+      <div class="answer-col">
+        <table>
+          <tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th></tr>
+          <tr data-q="21"><td>21</td><td><label><input type="radio" name="t5_21" value="A"> else</label></td><td><label><input type="radio" name="t5_21" value="B"> other</label></td><td><label><input type="radio" name="t5_21" value="C"> another</label></td><td><label><input type="radio" name="t5_21" value="D"> same</label></td></tr>
+          <tr data-q="22"><td>22</td><td><label><input type="radio" name="t5_22" value="A"> few</label></td><td><label><input type="radio" name="t5_22" value="B"> double</label></td><td><label><input type="radio" name="t5_22" value="C"> couple</label></td><td><label><input type="radio" name="t5_22" value="D"> several</label></td></tr>
+          <tr data-q="23"><td>23</td><td><label><input type="radio" name="t5_23" value="A"> part</label></td><td><label><input type="radio" name="t5_23" value="B"> piece</label></td><td><label><input type="radio" name="t5_23" value="C"> side</label></td><td><label><input type="radio" name="t5_23" value="D"> slice</label></td></tr>
+          <tr data-q="24"><td>24</td><td><label><input type="radio" name="t5_24" value="A"> since</label></td><td><label><input type="radio" name="t5_24" value="B"> past</label></td><td><label><input type="radio" name="t5_24" value="C"> before</label></td><td><label><input type="radio" name="t5_24" value="D"> ago</label></td></tr>
+          <tr data-q="25"><td>25</td><td><label><input type="radio" name="t5_25" value="A"> it</label></td><td><label><input type="radio" name="t5_25" value="B"> them</label></td><td><label><input type="radio" name="t5_25" value="C"> some</label></td><td><label><input type="radio" name="t5_25" value="D"> that</label></td></tr>
+          <tr data-q="26"><td>26</td><td><label><input type="radio" name="t5_26" value="A"> and</label></td><td><label><input type="radio" name="t5_26" value="B"> neither</label></td><td><label><input type="radio" name="t5_26" value="C"> or</label></td><td><label><input type="radio" name="t5_26" value="D"> but</label></td></tr>
+          <tr data-q="27"><td>27</td><td><label><input type="radio" name="t5_27" value="A"> has</label></td><td><label><input type="radio" name="t5_27" value="B"> was</label></td><td><label><input type="radio" name="t5_27" value="C"> did</label></td><td><label><input type="radio" name="t5_27" value="D"> had</label></td></tr>
+          <tr data-q="28"><td>28</td><td><label><input type="radio" name="t5_28" value="A"> people</label></td><td><label><input type="radio" name="t5_28" value="B"> jobs</label></td><td><label><input type="radio" name="t5_28" value="C"> things</label></td><td><label><input type="radio" name="t5_28" value="D"> goods</label></td></tr>
+          <tr data-q="29"><td>29</td><td><label><input type="radio" name="t5_29" value="A"> by</label></td><td><label><input type="radio" name="t5_29" value="B"> so</label></td><td><label><input type="radio" name="t5_29" value="C"> because</label></td><td><label><input type="radio" name="t5_29" value="D"> for</label></td></tr>
+          <tr data-q="30"><td>30</td><td><label><input type="radio" name="t5_30" value="A"> recently</label></td><td><label><input type="radio" name="t5_30" value="B"> tomorrow</label></td><td><label><input type="radio" name="t5_30" value="C"> today</label></td><td><label><input type="radio" name="t5_30" value="D"> soon</label></td></tr>
+        </table>
+      </div>
+    </div>
+    <div style="display:flex; flex-wrap:wrap; align-items:center;">
+      <button class="check-btn" onclick="checkTest('test5')">✅ Kiểm tra</button>
+      <button class="toggle-btn" onclick="toggleAnsKey('key5')">🔑 Đáp án</button>
+      <button class="toggle-btn" onclick="toggleVi('vi5')">🌐 Bản dịch</button>
+    </div>
+    <div id="key5" class="key-block hidden"><strong>21.A</strong> else | <strong>22.C</strong> couple | <strong>23.B</strong> piece | <strong>24.D</strong> ago | <strong>25.A</strong> it | <strong>26.C</strong> or | <strong>27.D</strong> had | <strong>28.A</strong> people | <strong>29.B</strong> so | <strong>30.C</strong> today</div>
+    <div id="vi5" class="vi-box hidden">Tiền là gì? Bảng Anh, đô la hay euro thực ra cũng giống như một gam hay kilômét. Sự khác biệt là bạn có thể đổi tiền để lấy thứ (21) khác. Một tờ mười bảng có thể mua một cuốn sách, một túi kẹo lớn, hoặc một (22) cặp vé xem phim. Nhưng bản thân tờ tiền chỉ là một (23) mảnh giấy được in, hầu như không tốn kém gì để sản xuất. Hàng ngàn năm (24) trước, con người không có tiền như chúng ta biết (25) nó. Không có ngân hàng (26) hay thậm chí cửa hàng. Thời đó, ông Green nông dân đổi ngô mà ông (27) đã trồng lấy mật ong của ông Hive.<br><br>Đây là một sự trao đổi được sắp xếp giữa hai (28) người, mỗi người có một thứ mà người kia muốn. Nhưng theo thời gian, hầu hết các xã hội đã phát minh ra tiền tệ riêng của họ (29) để mà mọi người có thể trao đổi nhiều hơn. Các loại tiền tệ khác nhau bắt đầu hợp nhất, đó là lý do tại sao (30) ngày nay mọi người sử dụng cùng một loại tiền tệ trong quốc gia của họ.</div>
+  </article>
+  
+    <!-- ========== TEST 6 ========== -->
+  <article class="glass-card test-item" data-testid="test6">
+    <div class="test-header"><span class="test-badge">Test 6</span><h2 class="test-title">PONY EXPRESS</h2></div>
+    <div class="two-col">
+      <div class="passage-box">Before 1860 there was no quick way of getting mail between the east and the west of the United States. There were no railways at that <span class="blank" data-q="21">21</span> and most mail was sent by coach. It usually <span class="blank" data-q="22">22</span> at least 25 days for coaches to <span class="blank" data-q="23">23</span> the coast. So in 1860 it <span class="blank" data-q="24">24</span> decided to send mail by 'Pony Express', which was much faster. Riders <span class="blank" data-q="25">25</span> very fast horses were placed along the route. They were at <span class="blank" data-q="26">26</span> distances from each other and the mail was handed from one rider to the next. Riders were all <span class="blank" data-q="27">27</span> to travel between twenty and thirty kilometres <span class="blank" data-q="28">28</span> day on very bad roads. At each stop two minutes were <span class="blank" data-q="29">29</span> for exchanging the mail bags, but riders were often held up by awful weather <span class="blank" data-q="30">30</span>  closed the roads. With the invention of the telegraph in 1861, the demand for Pony Express disappeared.</div>
+      <div class="answer-col">
+        <table>
+          <tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th></tr>
+          <tr data-q="21"><td>21</td><td><label><input type="radio" name="t6_21" value="A"> time</label></td><td><label><input type="radio" name="t6_21" value="B"> date</label></td><td><label><input type="radio" name="t6_21" value="C"> age</label></td><td><label><input type="radio" name="t6_21" value="D"> season</label></td></tr>
+          <tr data-q="22"><td>22</td><td><label><input type="radio" name="t6_22" value="A"> spent</label></td><td><label><input type="radio" name="t6_22" value="B"> lasted</label></td><td><label><input type="radio" name="t6_22" value="C"> took</label></td><td><label><input type="radio" name="t6_22" value="D"> passed</label></td></tr>
+          <tr data-q="23"><td>23</td><td><label><input type="radio" name="t6_23" value="A"> arrive</label></td><td><label><input type="radio" name="t6_23" value="B"> reach</label></td><td><label><input type="radio" name="t6_23" value="C"> come</label></td><td><label><input type="radio" name="t6_23" value="D"> get</label></td></tr>
+          <tr data-q="24"><td>24</td><td><label><input type="radio" name="t6_24" value="A"> is</label></td><td><label><input type="radio" name="t6_24" value="B"> had</label></td><td><label><input type="radio" name="t6_24" value="C"> has</label></td><td><label><input type="radio" name="t6_24" value="D"> was</label></td></tr>
+          <tr data-q="25"><td>25</td><td><label><input type="radio" name="t6_25" value="A"> with</label></td><td><label><input type="radio" name="t6_25" value="B"> off</label></td><td><label><input type="radio" name="t6_25" value="C"> for</label></td><td><label><input type="radio" name="t6_25" value="D"> behind</label></td></tr>
+          <tr data-q="26"><td>26</td><td><label><input type="radio" name="t6_26" value="A"> same</label></td><td><label><input type="radio" name="t6_26" value="B"> like</label></td><td><label><input type="radio" name="t6_26" value="C"> equal</label></td><td><label><input type="radio" name="t6_26" value="D"> level</label></td></tr>
+          <tr data-q="27"><td>27</td><td><label><input type="radio" name="t6_27" value="A"> wished</label></td><td><label><input type="radio" name="t6_27" value="B"> wanted</label></td><td><label><input type="radio" name="t6_27" value="C"> expected</label></td><td><label><input type="radio" name="t6_27" value="D"> hoped</label></td></tr>
+          <tr data-q="28"><td>28</td><td><label><input type="radio" name="t6_28" value="A"> a</label></td><td><label><input type="radio" name="t6_28" value="B"> one</label></td><td><label><input type="radio" name="t6_28" value="C"> some</label></td><td><label><input type="radio" name="t6_28" value="D"> any</label></td></tr>
+          <tr data-q="29"><td>29</td><td><label><input type="radio" name="t6_29" value="A"> made</label></td><td><label><input type="radio" name="t6_29" value="B"> let</label></td><td><label><input type="radio" name="t6_29" value="C"> done</label></td><td><label><input type="radio" name="t6_29" value="D"> allowed</label></td></tr>
+          <tr data-q="30"><td>30</td><td><label><input type="radio" name="t6_30" value="A"> when</label></td><td><label><input type="radio" name="t6_30" value="B"> where</label></td><td><label><input type="radio" name="t6_30" value="C"> what</label></td><td><label><input type="radio" name="t6_30" value="D"> which</label></td></tr>
+        </table>
+      </div>
+    </div>
+    <div style="display:flex; flex-wrap:wrap; align-items:center;">
+      <button class="check-btn" onclick="checkTest('test6')">✅ Kiểm tra</button>
+      <button class="toggle-btn" onclick="toggleAnsKey('key6')">🔑 Đáp án</button>
+      <button class="toggle-btn" onclick="toggleVi('vi6')">🌐 Bản dịch</button>
+    </div>
+    <div id="key6" class="key-block hidden"><strong>21.A</strong> time | <strong>22.C</strong> took | <strong>23.B</strong> reach | <strong>24.D</strong> was | <strong>25.A</strong> with | <strong>26.C</strong> equal | <strong>27.D</strong> expected | <strong>28.A</strong> a | <strong>29.D</strong> allowed | <strong>30.D</strong> which</div>
+    <div id="vi6" class="vi-box hidden">Trước năm 1860, không có cách nhanh chóng nào để gửi thư giữa miền đông và miền tây Hoa Kỳ. Vào (21) thời điểm đó chưa có đường sắt và hầu hết thư được gửi bằng xe ngựa. Thường (22) mất ít nhất 25 ngày để xe ngựa (23) đến được bờ biển. Vì vậy, vào năm 1860, người ta (24) đã quyết định gửi thư bằng 'Pony Express', nhanh hơn nhiều. Những người cưỡi ngựa (25) với những con ngựa rất nhanh được bố trí dọc theo tuyến đường. Họ ở những khoảng cách (26) bằng nhau và thư được chuyển từ người cưỡi này sang người cưỡi khác. Tất cả các tay đua được (27) kỳ vọng sẽ đi được từ hai mươi đến ba mươi km (28) mỗi ngày trên những con đường rất xấu. Tại mỗi điểm dừng, hai phút được (29) cho phép để đổi túi thư, nhưng các tay đua thường bị cản trở bởi thời tiết khắc nghiệt (30) mà khiến đường sá bị đóng. Với sự phát minh ra điện báo vào năm 1861, nhu cầu về Pony Express đã biến mất.</div>
+  </article>
+  
+    <!-- ========== TEST 7 ========== -->
+  <article class="glass-card test-item" data-testid="test7">
+    <div class="test-header"><span class="test-badge">Test 7</span><h2 class="test-title">THE FIRST WOMAN SCIENTIST</h2></div>
+    <div class="two-col">
+      <div class="passage-box">Hypatia was born in Alexandria, in Egypt, in 370 A.D. For many centuries she was <span class="blank" data-q="21">21</span> only woman scientist to have a place in the history books.<br><br>Hypatia's father was director of Alexandria University, and he <span class="blank" data-q="22">22</span> sure his daughter had the best education available. This was unusual, as most women then had few <span class="blank" data-q="23">23</span> to study.<br><br>After studying in Athens and Rome, Hypatia returned to Alexandria <span class="blank" data-q="24">24</span> she began teaching mathematics. She soon became famous <span class="blank" data-q="25">25</span> her knowledge of new ideas.<br><br>We have no copies of her books, <span class="blank" data-q="26">26</span> we know that she wrote several important mathematical works. Hypatia was also interested in technology and <span class="blank" data-q="27">27</span> several scientific tools to help with her work.<br><br>At the <span class="blank" data-q="28">28</span> many rulers were afraid of science, and <span class="blank" data-q="29">29</span> connected with it was in danger. One day in March 415, Hypatia <span class="blank" data-q="30">30</span> attacked in the street and killed.</div>
+      <div class="answer-col">
+        <table>
+          <tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th></tr>
+          <tr data-q="21"><td>21</td><td><label><input type="radio" name="t7_21" value="A"> the</label></td><td><label><input type="radio" name="t7_21" value="B"> one</label></td><td><label><input type="radio" name="t7_21" value="C"> a</label></td><td><label><input type="radio" name="t7_21" value="D"> an</label></td></tr>
+          <tr data-q="22"><td>22</td><td><label><input type="radio" name="t7_22" value="A"> said</label></td><td><label><input type="radio" name="t7_22" value="B"> made</label></td><td><label><input type="radio" name="t7_22" value="C"> could</label></td><td><label><input type="radio" name="t7_22" value="D"> put</label></td></tr>
+          <tr data-q="23"><td>23</td><td><label><input type="radio" name="t7_23" value="A"> opportunities</label></td><td><label><input type="radio" name="t7_23" value="B"> customs</label></td><td><label><input type="radio" name="t7_23" value="C"> classes</label></td><td><label><input type="radio" name="t7_23" value="D"> teachers</label></td></tr>
+          <tr data-q="24"><td>24</td><td><label><input type="radio" name="t7_24" value="A"> where</label></td><td><label><input type="radio" name="t7_24" value="B"> how</label></td><td><label><input type="radio" name="t7_24" value="C"> there</label></td><td><label><input type="radio" name="t7_24" value="D"> which</label></td></tr>
+          <tr data-q="25"><td>25</td><td><label><input type="radio" name="t7_25" value="A"> by</label></td><td><label><input type="radio" name="t7_25" value="B"> from</label></td><td><label><input type="radio" name="t7_25" value="C"> for</label></td><td><label><input type="radio" name="t7_25" value="D"> in</label></td></tr>
+          <tr data-q="26"><td>26</td><td><label><input type="radio" name="t7_26" value="A"> or</label></td><td><label><input type="radio" name="t7_26" value="B"> because</label></td><td><label><input type="radio" name="t7_26" value="C"> but</label></td><td><label><input type="radio" name="t7_26" value="D"> as</label></td></tr>
+          <tr data-q="27"><td>27</td><td><label><input type="radio" name="t7_27" value="A"> learnt</label></td><td><label><input type="radio" name="t7_27" value="B"> experimented</label></td><td><label><input type="radio" name="t7_27" value="C"> did</label></td><td><label><input type="radio" name="t7_27" value="D"> invented</label></td></tr>
+          <tr data-q="28"><td>28</td><td><label><input type="radio" name="t7_28" value="A"> time</label></td><td><label><input type="radio" name="t7_28" value="B"> period</label></td><td><label><input type="radio" name="t7_28" value="C"> year</label></td><td><label><input type="radio" name="t7_28" value="D"> day</label></td></tr>
+          <tr data-q="29"><td>29</td><td><label><input type="radio" name="t7_29" value="A"> anyone</label></td><td><label><input type="radio" name="t7_29" value="B"> nobody</label></td><td><label><input type="radio" name="t7_29" value="C"> all</label></td><td><label><input type="radio" name="t7_29" value="D"> something</label></td></tr>
+          <tr data-q="30"><td>30</td><td><label><input type="radio" name="t7_30" value="A"> was</label></td><td><label><input type="radio" name="t7_30" value="B"> had</label></td><td><label><input type="radio" name="t7_30" value="C"> has</label></td><td><label><input type="radio" name="t7_30" value="D"> is</label></td></tr>
+        </table>
+      </div>
+    </div>
+    <div style="display:flex; flex-wrap:wrap; align-items:center;">
+      <button class="check-btn" onclick="checkTest('test7')">✅ Kiểm tra</button>
+      <button class="toggle-btn" onclick="toggleAnsKey('key7')">🔑 Đáp án</button>
+      <button class="toggle-btn" onclick="toggleVi('vi7')">🌐 Bản dịch</button>
+    </div>
+    <div id="key7" class="key-block hidden"><strong>21.A</strong> the | <strong>22.B</strong> made | <strong>23.A</strong> opportunities | <strong>24.A</strong> where | <strong>25.C</strong> for | <strong>26.C</strong> but | <strong>27.D</strong> invented | <strong>28.A</strong> time | <strong>29.A</strong> anyone | <strong>30.A</strong> was</div>
+    <div id="vi7" class="vi-box hidden">Hypatia sinh ra ở Alexandria, Ai Cập, vào năm 370 sau Công nguyên. Trong nhiều thế kỷ, bà là (21) nhà khoa học nữ duy nhất có tên trong sách lịch sử.<br><br>Cha của Hypatia là giám đốc Đại học Alexandria, và ông (22) đảm bảo con gái mình được hưởng nền giáo dục tốt nhất hiện có. Điều này thật bất thường, vì hầu hết phụ nữ thời đó có rất ít (23) cơ hội học tập.<br><br>Sau khi học ở Athens và Rome, Hypatia trở về Alexandria (24) nơi bà bắt đầu giảng dạy toán học. Bà sớm nổi tiếng (25) vì kiến thức về những ý tưởng mới.<br><br>Chúng ta không có bản sao nào của những cuốn sách của bà, (26) nhưng chúng ta biết rằng bà đã viết một số công trình toán học quan trọng. Hypatia cũng quan tâm đến công nghệ và đã (27) phát minh ra một số công cụ khoa học để hỗ trợ công việc của mình.<br><br>Vào (28) thời điểm đó, nhiều nhà cai trị sợ khoa học, và (29) bất kỳ ai liên quan đến nó đều gặp nguy hiểm. Một ngày tháng Ba năm 415, Hypatia (30) bị tấn công trên đường phố và bị giết.</div>
+  </article>
+  
+    <!-- ========== TEST 8 ========== -->
+  <article class="glass-card test-item" data-testid="test8">
+    <div class="test-header"><span class="test-badge">Test 8</span><h2 class="test-title">CAMPING</h2></div>
+    <div class="two-col">
+      <div class="passage-box">Although some groups of people have always lived outdoors in tents, camping as we know it today only began to be <span class="blank" data-q="21">21</span> about 50 years ago. The increase in the use of cars and improvements in camping <span class="blank" data-q="22">22</span> have allowed more people to travel longer <span class="blank" data-q="23">23</span> into the countryside and to stay there in greater comfort.<br><br>Many campers like to be <span class="blank" data-q="24">24</span> themselves in quiet areas, so they <span class="blank" data-q="25">25</span> their tent and food and walk or cycle into the forests or the mountains. Others, preferring to be near people, drive to a public or privately-owned campsite <span class="blank" data-q="26">26</span> has up-to-date facilities, <span class="blank" data-q="27">27</span> hot showers and swimming pools.<br><br>Whether campers are <span class="blank" data-q="28">28</span> in the mountains or on a busy site, they should remember to <span class="blank" data-q="29">29</span> the area clean and tidy. In the forests, they must put out any fires and keep food hidden to avoid attracting <span class="blank" data-q="30">30</span> animals.</div>
+      <div class="answer-col">
+        <table>
+          <tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th></tr>
+          <tr data-q="21"><td>21</td><td><label><input type="radio" name="t8_21" value="A"> popular</label></td><td><label><input type="radio" name="t8_21" value="B"> famous</label></td><td><label><input type="radio" name="t8_21" value="C"> favourite</label></td><td><label><input type="radio" name="t8_21" value="D"> current</label></td></tr>
+          <tr data-q="22"><td>22</td><td><label><input type="radio" name="t8_22" value="A"> baggage</label></td><td><label><input type="radio" name="t8_22" value="B"> equipment</label></td><td><label><input type="radio" name="t8_22" value="C"> property</label></td><td><label><input type="radio" name="t8_22" value="D"> tool</label></td></tr>
+          <tr data-q="23"><td>23</td><td><label><input type="radio" name="t8_23" value="A"> voyages</label></td><td><label><input type="radio" name="t8_23" value="B"> ways</label></td><td><label><input type="radio" name="t8_23" value="C"> directions</label></td><td><label><input type="radio" name="t8_23" value="D"> distances</label></td></tr>
+          <tr data-q="24"><td>24</td><td><label><input type="radio" name="t8_24" value="A"> by</label></td><td><label><input type="radio" name="t8_24" value="B"> on</label></td><td><label><input type="radio" name="t8_24" value="C"> at</label></td><td><label><input type="radio" name="t8_24" value="D"> of</label></td></tr>
+          <tr data-q="25"><td>25</td><td><label><input type="radio" name="t8_25" value="A"> make</label></td><td><label><input type="radio" name="t8_25" value="B"> take</label></td><td><label><input type="radio" name="t8_25" value="C"> pick</label></td><td><label><input type="radio" name="t8_25" value="D"> do</label></td></tr>
+          <tr data-q="26"><td>26</td><td><label><input type="radio" name="t8_26" value="A"> which</label></td><td><label><input type="radio" name="t8_26" value="B"> who</label></td><td><label><input type="radio" name="t8_26" value="C"> where</label></td><td><label><input type="radio" name="t8_26" value="D"> when</label></td></tr>
+          <tr data-q="27"><td>27</td><td><label><input type="radio" name="t8_27" value="A"> just</label></td><td><label><input type="radio" name="t8_27" value="B"> such</label></td><td><label><input type="radio" name="t8_27" value="C"> as</label></td><td><label><input type="radio" name="t8_27" value="D"> like</label></td></tr>
+          <tr data-q="28"><td>28</td><td><label><input type="radio" name="t8_28" value="A"> lonely</label></td><td><label><input type="radio" name="t8_28" value="B"> alone</label></td><td><label><input type="radio" name="t8_28" value="C"> single</label></td><td><label><input type="radio" name="t8_28" value="D"> separate</label></td></tr>
+          <tr data-q="29"><td>29</td><td><label><input type="radio" name="t8_29" value="A"> stay</label></td><td><label><input type="radio" name="t8_29" value="B"> remain</label></td><td><label><input type="radio" name="t8_29" value="C"> leave</label></td><td><label><input type="radio" name="t8_29" value="D"> let</label></td></tr>
+          <tr data-q="30"><td>30</td><td><label><input type="radio" name="t8_30" value="A"> wild</label></td><td><label><input type="radio" name="t8_30" value="B"> natural</label></td><td><label><input type="radio" name="t8_30" value="C"> loose</label></td><td><label><input type="radio" name="t8_30" value="D"> free</label></td></tr>
+        </table>
+      </div>
+    </div>
+    <div style="display:flex; flex-wrap:wrap; align-items:center;">
+      <button class="check-btn" onclick="checkTest('test8')">✅ Kiểm tra</button>
+      <button class="toggle-btn" onclick="toggleAnsKey('key8')">🔑 Đáp án</button>
+      <button class="toggle-btn" onclick="toggleVi('vi8')">🌐 Bản dịch</button>
+    </div>
+    <div id="key8" class="key-block hidden"><strong>21.A</strong> popular | <strong>22.B</strong> equipment | <strong>23.D</strong> distances | <strong>24.A</strong> by | <strong>25.B</strong> take | <strong>26.A</strong> which | <strong>27.D</strong> like | <strong>28.B</strong> alone | <strong>29.C</strong> leave | <strong>30.A</strong> wild</div>
+    <div id="vi8" class="vi-box hidden">Mặc dù một số nhóm người đã luôn sống ngoài trời trong lều, nhưng cắm trại như chúng ta biết ngày nay chỉ bắt đầu trở nên (21) phổ biến khoảng 50 năm trước. Sự gia tăng sử dụng ô tô và những cải tiến trong (22) thiết bị cắm trại đã cho phép nhiều người đi xa hơn những (23) khoảng cách vào vùng nông thôn và ở lại đó thoải mái hơn.<br><br>Nhiều người cắm trại thích ở (24) một mình ở những nơi yên tĩnh, vì vậy họ (25) mang theo lều và thức ăn và đi bộ hoặc đạp xe vào rừng hoặc núi. Những người khác, thích gần gũi với mọi người, lái xe đến một khu cắm trại công cộng hoặc tư nhân (26) mà có cơ sở vật chất hiện đại, (27) như vòi sen nước nóng và hồ bơi.<br><br>Cho dù người cắm trại ở (28) một mình trên núi hay ở một khu đông đúc, họ nên nhớ (29) giữ cho khu vực sạch sẽ và gọn gàng. Trong rừng, họ phải dập tắt mọi đám lửa và giấu thức ăn để tránh thu hút (30) động vật hoang dã.</div>
+  </article>
+  
+    <!-- ========== TEST 9 ========== -->
+  <article class="glass-card test-item" data-testid="test9">
+    <div class="test-header"><span class="test-badge">Test 9</span><h2 class="test-title">NEW HOME – NEW SCHOOL</h2></div>
+    <div class="two-col">
+      <div class="passage-box">Last year my Dad got a new job. It was in a town which was 100 km from our home. Mum and Dad <span class="blank" data-q="21">21</span> we would have to move, because it was a long way for Dad <span class="blank" data-q="22">22</span> travel every day.<br><br>When they <span class="blank" data-q="23">23</span> me about their plan I was upset <span class="blank" data-q="24">24</span> I loved my home and school. I was worried that I would <span class="blank" data-q="25">25</span> all my friends and teachers a lot.<br><br>Anyway, six months <span class="blank" data-q="26">26</span> that, my family moved to the town of Hexford. The house was much bigger than our old one, and <span class="blank" data-q="27">27</span> my bedroom window I <span class="blank" data-q="28">28</span> see the sea.<br><br>I wasn't looking forward to the first day at my new school. I felt really <span class="blank" data-q="29">29</span> about meeting lots of new people. But when I got there everyone was great. My class teacher was nice and I <span class="blank" data-q="30">30</span> friends with two girls in my class. Moving home isn't that bad, after all!</div>
+      <div class="answer-col">
+        <table>
+          <tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th></tr>
+          <tr data-q="21"><td>21</td><td><label><input type="radio" name="t9_21" value="A"> chose</label></td><td><label><input type="radio" name="t9_21" value="B"> decided</label></td><td><label><input type="radio" name="t9_21" value="C"> selected</label></td><td><label><input type="radio" name="t9_21" value="D"> picked</label></td></tr>
+          <tr data-q="22"><td>22</td><td><label><input type="radio" name="t9_22" value="A"> travel</label></td><td><label><input type="radio" name="t9_22" value="B"> carry</label></td><td><label><input type="radio" name="t9_22" value="C"> tour</label></td><td><label><input type="radio" name="t9_22" value="D"> transport</label></td></tr>
+          <tr data-q="23"><td>23</td><td><label><input type="radio" name="t9_23" value="A"> explained</label></td><td><label><input type="radio" name="t9_23" value="B"> spoke</label></td><td><label><input type="radio" name="t9_23" value="C"> said</label></td><td><label><input type="radio" name="t9_23" value="D"> told</label></td></tr>
+          <tr data-q="24"><td>24</td><td><label><input type="radio" name="t9_24" value="A"> so</label></td><td><label><input type="radio" name="t9_24" value="B"> because</label></td><td><label><input type="radio" name="t9_24" value="C"> but</label></td><td><label><input type="radio" name="t9_24" value="D"> and</label></td></tr>
+          <tr data-q="25"><td>25</td><td><label><input type="radio" name="t9_25" value="A"> miss</label></td><td><label><input type="radio" name="t9_25" value="B"> lose</label></td><td><label><input type="radio" name="t9_25" value="C"> leave</label></td><td><label><input type="radio" name="t9_25" value="D"> forget</label></td></tr>
+          <tr data-q="26"><td>26</td><td><label><input type="radio" name="t9_26" value="A"> next</label></td><td><label><input type="radio" name="t9_26" value="B"> further</label></td><td><label><input type="radio" name="t9_26" value="C"> after</label></td><td><label><input type="radio" name="t9_26" value="D"> later</label></td></tr>
+          <tr data-q="27"><td>27</td><td><label><input type="radio" name="t9_27" value="A"> away</label></td><td><label><input type="radio" name="t9_27" value="B"> along</label></td><td><label><input type="radio" name="t9_27" value="C"> down</label></td><td><label><input type="radio" name="t9_27" value="D"> from</label></td></tr>
+          <tr data-q="28"><td>28</td><td><label><input type="radio" name="t9_28" value="A"> could</label></td><td><label><input type="radio" name="t9_28" value="B"> shall</label></td><td><label><input type="radio" name="t9_28" value="C"> must</label></td><td><label><input type="radio" name="t9_28" value="D"> would</label></td></tr>
+          <tr data-q="29"><td>29</td><td><label><input type="radio" name="t9_29" value="A"> angry</label></td><td><label><input type="radio" name="t9_29" value="B"> disappointed</label></td><td><label><input type="radio" name="t9_29" value="C"> nervous</label></td><td><label><input type="radio" name="t9_29" value="D"> bored</label></td></tr>
+          <tr data-q="30"><td>30</td><td><label><input type="radio" name="t9_30" value="A"> made</label></td><td><label><input type="radio" name="t9_30" value="B"> found</label></td><td><label><input type="radio" name="t9_30" value="C"> knew</label></td><td><label><input type="radio" name="t9_30" value="D"> met</label></td></tr>
+        </table>
+      </div>
+    </div>
+    <div style="display:flex; flex-wrap:wrap; align-items:center;">
+      <button class="check-btn" onclick="checkTest('test9')">✅ Kiểm tra</button>
+      <button class="toggle-btn" onclick="toggleAnsKey('key9')">🔑 Đáp án</button>
+      <button class="toggle-btn" onclick="toggleVi('vi9')">🌐 Bản dịch</button>
+    </div>
+    <div id="key9" class="key-block hidden"><strong>21.B</strong> decided | <strong>22.A</strong> travel | <strong>23.D</strong> told | <strong>24.B</strong> because | <strong>25.A</strong> miss | <strong>26.C</strong> after | <strong>27.D</strong> from | <strong>28.A</strong> could | <strong>29.C</strong> nervous | <strong>30.A</strong> made</div>
+    <div id="vi9" class="vi-box hidden">Năm ngoái, bố tôi có một công việc mới. Đó là ở một thị trấn cách nhà chúng tôi 100 km. Bố mẹ tôi (21) quyết định chúng tôi sẽ phải chuyển đi, vì đó là một quãng đường dài để bố (22) đi lại mỗi ngày.<br><br>Khi họ (23) nói với tôi về kế hoạch của họ, tôi rất buồn (24) vì tôi yêu ngôi nhà và trường học của mình. Tôi lo rằng mình sẽ (25) nhớ tất cả bạn bè và thầy cô rất nhiều.<br><br>Dù sao đi nữa, sáu tháng (26) sau đó, gia đình tôi chuyển đến thị trấn Hexford. Ngôi nhà lớn hơn nhiều so với ngôi nhà cũ của chúng tôi, và (27) từ cửa sổ phòng ngủ, tôi (28) có thể nhìn thấy biển.<br><br>Tôi đã không mong đợi ngày đầu tiên ở trường mới. Tôi cảm thấy thực sự (29) lo lắng về việc gặp gỡ nhiều người mới. Nhưng khi tôi đến đó, mọi người đều tuyệt vời. Giáo viên chủ nhiệm của tôi rất tốt và tôi đã (30) kết bạn với hai cô gái trong lớp. Chuyển nhà hóa ra cũng không tệ đến thế!</div>
+  </article>
+  
+    <!-- ========== TEST 10 ========== -->
+  <article class="glass-card test-item" data-testid="test10">
+    <div class="test-header"><span class="test-badge">Test 10</span><h2 class="test-title">WILLIAM THE HERO!</h2></div>
+    <div class="two-col">
+      <div class="passage-box">Brave William Baldock, who is six years old, is a hero after helping his mother when she fell downstairs. William quickly rang <span class="blank" data-q="21">21</span> an ambulance when he discovered his mother had broken her leg. In spite of being frightened, he <span class="blank" data-q="22">22</span> the emergency services what had happened and answered all the questions they asked him. He also telephoned his father <span class="blank" data-q="23">23</span> work, and then his grandmother, to explain what he had <span class="blank" data-q="24">24</span>. While waiting for <span class="blank" data-q="25">25</span> people to come, William looked after his 18-month-old sister.<br><br>When ambulance man Steve Lyn went to the house, he was amazed: "It's <span class="blank" data-q="26">26</span> that a young boy of six knew the right number to <span class="blank" data-q="27">27</span> and was able to give us the correct information. <span class="blank" data-q="28">28</span> of William's quick thinking, we were able to <span class="blank" data-q="29">29</span> there immediately."<br><br>Mrs Baldock left hospital yesterday, very <span class="blank" data-q="30">30</span> to both William and the ambulance service.</div>
+      <div class="answer-col">
+        <table>
+          <tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th></tr>
+          <tr data-q="21"><td>21</td><td><label><input type="radio" name="t10_21" value="A"> to</label></td><td><label><input type="radio" name="t10_21" value="B"> for</label></td><td><label><input type="radio" name="t10_21" value="C"> off</label></td><td><label><input type="radio" name="t10_21" value="D"> with</label></td></tr>
+          <tr data-q="22"><td>22</td><td><label><input type="radio" name="t10_22" value="A"> talked</label></td><td><label><input type="radio" name="t10_22" value="B"> said</label></td><td><label><input type="radio" name="t10_22" value="C"> told</label></td><td><label><input type="radio" name="t10_22" value="D"> spoke</label></td></tr>
+          <tr data-q="23"><td>23</td><td><label><input type="radio" name="t10_23" value="A"> by</label></td><td><label><input type="radio" name="t10_23" value="B"> in</label></td><td><label><input type="radio" name="t10_23" value="C"> on</label></td><td><label><input type="radio" name="t10_23" value="D"> at</label></td></tr>
+          <tr data-q="24"><td>24</td><td><label><input type="radio" name="t10_24" value="A"> done</label></td><td><label><input type="radio" name="t10_24" value="B"> made</label></td><td><label><input type="radio" name="t10_24" value="C"> acted</label></td><td><label><input type="radio" name="t10_24" value="D"> worked</label></td></tr>
+          <tr data-q="25"><td>25</td><td><label><input type="radio" name="t10_25" value="A"> every</label></td><td><label><input type="radio" name="t10_25" value="B"> these</label></td><td><label><input type="radio" name="t10_25" value="C"> each</label></td><td><label><input type="radio" name="t10_25" value="D"> this</label></td></tr>
+          <tr data-q="26"><td>26</td><td><label><input type="radio" name="t10_26" value="A"> great</label></td><td><label><input type="radio" name="t10_26" value="B"> pleased</label></td><td><label><input type="radio" name="t10_26" value="C"> fine</label></td><td><label><input type="radio" name="t10_26" value="D"> clever</label></td></tr>
+          <tr data-q="27"><td>27</td><td><label><input type="radio" name="t10_27" value="A"> hit</label></td><td><label><input type="radio" name="t10_27" value="B"> put</label></td><td><label><input type="radio" name="t10_27" value="C"> set</label></td><td><label><input type="radio" name="t10_27" value="D"> dial</label></td></tr>
+          <tr data-q="28"><td>28</td><td><label><input type="radio" name="t10_28" value="A"> Since</label></td><td><label><input type="radio" name="t10_28" value="B"> Because</label></td><td><label><input type="radio" name="t10_28" value="C"> As</label></td><td><label><input type="radio" name="t10_28" value="D"> Although</label></td></tr>
+          <tr data-q="29"><td>29</td><td><label><input type="radio" name="t10_29" value="A"> find</label></td><td><label><input type="radio" name="t10_29" value="B"> manage</label></td><td><label><input type="radio" name="t10_29" value="C"> get</label></td><td><label><input type="radio" name="t10_29" value="D"> reach</label></td></tr>
+          <tr data-q="30"><td>30</td><td><label><input type="radio" name="t10_30" value="A"> grateful</label></td><td><label><input type="radio" name="t10_30" value="B"> agreeable</label></td><td><label><input type="radio" name="t10_30" value="C"> happy</label></td><td><label><input type="radio" name="t10_30" value="D"> approving</label></td></tr>
+        </table>
+      </div>
+    </div>
+    <div style="display:flex; flex-wrap:wrap; align-items:center;">
+      <button class="check-btn" onclick="checkTest('test10')">✅ Kiểm tra</button>
+      <button class="toggle-btn" onclick="toggleAnsKey('key10')">🔑 Đáp án</button>
+      <button class="toggle-btn" onclick="toggleVi('vi10')">🌐 Bản dịch</button>
+    </div>
+    <div id="key10" class="key-block hidden"><strong>21.B</strong> for | <strong>22.C</strong> told | <strong>23.D</strong> at | <strong>24.A</strong> done | <strong>25.B</strong> these | <strong>26.A</strong> great | <strong>27.D</strong> dial | <strong>28.B</strong> Because | <strong>29.C</strong> get | <strong>30.A</strong> grateful</div>
+    <div id="vi10" class="vi-box hidden">Cậu bé dũng cảm William Baldock, sáu tuổi, là một anh hùng sau khi giúp mẹ mình khi bà ngã cầu thang. William nhanh chóng gọi (21) xe cứu thương khi phát hiện mẹ mình bị gãy chân. Mặc dù sợ hãi, cậu bé đã (22) kể cho dịch vụ cấp cứu những gì đã xảy ra và trả lời tất cả các câu hỏi họ hỏi. Cậu cũng gọi điện cho bố đang (23) đi làm, và sau đó là bà của mình, để giải thích những gì cậu đã (24) làm. Trong khi chờ (25) những người đó đến, William đã trông chừng em gái 18 tháng tuổi của mình.<br><br>Khi nhân viên xe cứu thương Steve Lyn đến nhà, ông đã rất kinh ngạc: "Thật (26) tuyệt vời khi một cậu bé sáu tuổi biết đúng số để (27) gọi và có thể cung cấp cho chúng tôi thông tin chính xác. (28) Nhờ sự nhanh trí của William, chúng tôi đã có thể (29) đến đó ngay lập tức."<br><br>Bà Baldock đã rời bệnh viện ngày hôm qua, rất (30) biết ơn cả William và dịch vụ xe cứu thương.</div>
+  </article>
+  
+    <!-- ========== TEST 11 ========== -->
+  <article class="glass-card test-item" data-testid="test11">
+    <div class="test-header"><span class="test-badge">Test 11</span><h2 class="test-title">THE ESCALATOR</h2></div>
+    <div class="two-col">
+      <div class="passage-box">An American, Charles D. Seeberger, invented moving stairs to transport people in the 1890s. He <span class="blank" data-q="21">21</span> this invention an 'escalator', <span class="blank" data-q="22">22</span> the name from the Latin word 'scala', <span class="blank" data-q="23">23</span> means 'ladder'. Escalators move people up and down short <span class="blank" data-q="24">24</span>. Lifts do the same, but only move <span class="blank" data-q="25">25</span> small number of people. If an escalator breaks down, it can still be <span class="blank" data-q="26">26</span> as ordinary stairs. An escalator can move <span class="blank" data-q="27">27</span> 8,000 and 9,600 people an hour, and it <span class="blank" data-q="28">28</span> not need a person to operate it.<br><br>Towards the end of the nineteenth century, cities were <span class="blank" data-q="29">29</span> more crowded and the first escalators were built at railway stations and in big department <span class="blank" data-q="30">30</span> so that people could move about more quickly. Today we see escalators everywhere.</div>
+      <div class="answer-col">
+        <table>
+          <tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th></tr>
+          <tr data-q="21"><td>21</td><td><label><input type="radio" name="t11_21" value="A"> announced</label></td><td><label><input type="radio" name="t11_21" value="B"> called</label></td><td><label><input type="radio" name="t11_21" value="C"> translated</label></td><td><label><input type="radio" name="t11_21" value="D"> explained</label></td></tr>
+          <tr data-q="22"><td>22</td><td><label><input type="radio" name="t11_22" value="A"> carrying</label></td><td><label><input type="radio" name="t11_22" value="B"> fetching</label></td><td><label><input type="radio" name="t11_22" value="C"> lending</label></td><td><label><input type="radio" name="t11_22" value="D"> taking</label></td></tr>
+          <tr data-q="23"><td>23</td><td><label><input type="radio" name="t11_23" value="A"> what</label></td><td><label><input type="radio" name="t11_23" value="B"> whose</label></td><td><label><input type="radio" name="t11_23" value="C"> which</label></td><td><label><input type="radio" name="t11_23" value="D"> who</label></td></tr>
+          <tr data-q="24"><td>24</td><td><label><input type="radio" name="t11_24" value="A"> distances</label></td><td><label><input type="radio" name="t11_24" value="B"> direction</label></td><td><label><input type="radio" name="t11_24" value="C"> measurements</label></td><td><label><input type="radio" name="t11_24" value="D"> lengths</label></td></tr>
+          <tr data-q="25"><td>25</td><td><label><input type="radio" name="t11_25" value="A"> some</label></td><td><label><input type="radio" name="t11_25" value="B"> the</label></td><td><label><input type="radio" name="t11_25" value="C"> a</label></td><td><label><input type="radio" name="t11_25" value="D"> any</label></td></tr>
+          <tr data-q="26"><td>26</td><td><label><input type="radio" name="t11_26" value="A"> walked</label></td><td><label><input type="radio" name="t11_26" value="B"> used</label></td><td><label><input type="radio" name="t11_26" value="C"> made</label></td><td><label><input type="radio" name="t11_26" value="D"> changed</label></td></tr>
+          <tr data-q="27"><td>27</td><td><label><input type="radio" name="t11_27" value="A"> above</label></td><td><label><input type="radio" name="t11_27" value="B"> from</label></td><td><label><input type="radio" name="t11_27" value="C"> to</label></td><td><label><input type="radio" name="t11_27" value="D"> between</label></td></tr>
+          <tr data-q="28"><td>28</td><td><label><input type="radio" name="t11_28" value="A"> had</label></td><td><label><input type="radio" name="t11_28" value="B"> is</label></td><td><label><input type="radio" name="t11_28" value="C"> becoming</label></td><td><label><input type="radio" name="t11_28" value="D"> developing</label></td></tr>
+          <tr data-q="29"><td>29</td><td><label><input type="radio" name="t11_29" value="A"> continuing</label></td><td><label><input type="radio" name="t11_29" value="B"> coming</label></td><td><label><input type="radio" name="t11_29" value="C"> becoming</label></td><td><label><input type="radio" name="t11_29" value="D"> developing</label></td></tr>
+          <tr data-q="30"><td>30</td><td><label><input type="radio" name="t11_30" value="A"> stores</label></td><td><label><input type="radio" name="t11_30" value="B"> shops</label></td><td><label><input type="radio" name="t11_30" value="C"> places</label></td><td><label><input type="radio" name="t11_30" value="D"> houses</label></td></tr>
+        </table>
+      </div>
+    </div>
+    <div style="display:flex; flex-wrap:wrap; align-items:center;">
+      <button class="check-btn" onclick="checkTest('test11')">✅ Kiểm tra</button>
+      <button class="toggle-btn" onclick="toggleAnsKey('key11')">🔑 Đáp án</button>
+      <button class="toggle-btn" onclick="toggleVi('vi11')">🌐 Bản dịch</button>
+    </div>
+    <div id="key11" class="key-block hidden"><strong>21.B</strong> called | <strong>22.D</strong> taking | <strong>23.C</strong> which | <strong>24.A</strong> distances | <strong>25.C</strong> a | <strong>26.B</strong> used | <strong>27.D</strong> between | <strong>28.C</strong> becoming | <strong>29.C</strong> becoming | <strong>30.A</strong> stores</div>
+    <div id="vi11" class="vi-box hidden">Một người Mỹ, Charles D. Seeberger, đã phát minh ra cầu thang di động để vận chuyển người vào những năm 1890. Ông (21) gọi phát minh này là 'thang cuốn', (22) lấy tên từ tiếng Latin 'scala', (23) có nghĩa là 'cái thang'. Thang cuốn di chuyển người lên xuống những (24) khoảng cách ngắn. Thang máy cũng làm điều tương tự, nhưng chỉ di chuyển được (25) một số lượng nhỏ người. Nếu thang cuốn bị hỏng, nó vẫn có thể được (26) sử dụng như cầu thang bộ thông thường. Một thang cuốn có thể vận chuyển (27) giữa 8.000 và 9.600 người mỗi giờ, và nó (28) không cần người vận hành.<br><br>Vào cuối thế kỷ 19, các thành phố ngày càng (29) trở nên đông đúc hơn và những thang cuốn đầu tiên được xây dựng tại các ga tàu và trong các (30) cửa hàng bách hóa lớn để mọi người có thể di chuyển nhanh hơn. Ngày nay, chúng ta thấy thang cuốn ở khắp mọi nơi.</div>
+  </article>
+  
+    <!-- ========== TEST 12 ========== -->
+  <article class="glass-card test-item" data-testid="test12">
+    <div class="test-header"><span class="test-badge">Test 12</span><h2 class="test-title">MY LIFE IN BOOKS</h2></div>
+    <div class="two-col">
+      <div class="passage-box">It was my parents, of course, who taught me to read. I can't <span class="blank" data-q="21">21</span> my life before reading, without books. When I started reading, a book was mainly pictures. Now <span class="blank" data-q="22">22</span> I am older, a book <span class="blank" data-q="23">23</span> only words in most cases, <span class="blank" data-q="24">24</span> I also love art books, <span class="blank" data-q="25">25</span> the pages to look slowly and hungrily at paintings <span class="blank" data-q="26">26</span> the walls of galleries and museums around the planet.<br><br>I spend hours and hours reading, lost in other worlds, traveling, dreaming, imagining people and places. Books <span class="blank" data-q="27">27</span> me smells and sounds I may never experience directly, but <span class="blank" data-q="28">28</span> seem to make my life more interesting.<br><br>This love of books is not without <span class="blank" data-q="29">29</span> own problems. For example, when I go to the cinema to watch a film with friends, I don't get as excited as they <span class="blank" data-q="30">30</span> – I can't wait to get back home to my books.</div>
+      <div class="answer-col">
+        <table>
+          <tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th></tr>
+          <tr data-q="21"><td>21</td><td><label><input type="radio" name="t12_21" value="A"> repeat</label></td><td><label><input type="radio" name="t12_21" value="B"> register</label></td><td><label><input type="radio" name="t12_21" value="C"> remind</label></td><td><label><input type="radio" name="t12_21" value="D"> remember</label></td></tr>
+          <tr data-q="22"><td>22</td><td><label><input type="radio" name="t12_22" value="A"> then</label></td><td><label><input type="radio" name="t12_22" value="B"> so</label></td><td><label><input type="radio" name="t12_22" value="C"> that</label></td><td><label><input type="radio" name="t12_22" value="D"> how</label></td></tr>
+          <tr data-q="23"><td>23</td><td><label><input type="radio" name="t12_23" value="A"> counts</label></td><td><label><input type="radio" name="t12_23" value="B"> controls</label></td><td><label><input type="radio" name="t12_23" value="C"> keeps</label></td><td><label><input type="radio" name="t12_23" value="D"> contains</label></td></tr>
+          <tr data-q="24"><td>24</td><td><label><input type="radio" name="t12_24" value="A"> But</label></td><td><label><input type="radio" name="t12_24" value="B"> Or</label></td><td><label><input type="radio" name="t12_24" value="C"> And</label></td><td><label><input type="radio" name="t12_24" value="D"> Why</label></td></tr>
+          <tr data-q="25"><td>25</td><td><label><input type="radio" name="t12_25" value="A"> changing</label></td><td><label><input type="radio" name="t12_25" value="B"> turning</label></td><td><label><input type="radio" name="t12_25" value="C"> putting</label></td><td><label><input type="radio" name="t12_25" value="D"> placing</label></td></tr>
+          <tr data-q="26"><td>26</td><td><label><input type="radio" name="t12_26" value="A"> with</label></td><td><label><input type="radio" name="t12_26" value="B"> in</label></td><td><label><input type="radio" name="t12_26" value="C"> from</label></td><td><label><input type="radio" name="t12_26" value="D"> at</label></td></tr>
+          <tr data-q="27"><td>27</td><td><label><input type="radio" name="t12_27" value="A"> move</label></td><td><label><input type="radio" name="t12_27" value="B"> carry</label></td><td><label><input type="radio" name="t12_27" value="C"> bring</label></td><td><label><input type="radio" name="t12_27" value="D"> pull</label></td></tr>
+          <tr data-q="28"><td>28</td><td><label><input type="radio" name="t12_28" value="A"> who</label></td><td><label><input type="radio" name="t12_28" value="B"> what</label></td><td><label><input type="radio" name="t12_28" value="C"> where</label></td><td><label><input type="radio" name="t12_28" value="D"> which</label></td></tr>
+          <tr data-q="29"><td>29</td><td><label><input type="radio" name="t12_29" value="A"> its</label></td><td><label><input type="radio" name="t12_29" value="B"> their</label></td><td><label><input type="radio" name="t12_29" value="C"> the</label></td><td><label><input type="radio" name="t12_29" value="D"> some</label></td></tr>
+          <tr data-q="30"><td>30</td><td><label><input type="radio" name="t12_30" value="A"> be</label></td><td><label><input type="radio" name="t12_30" value="B"> do</label></td><td><label><input type="radio" name="t12_30" value="C"> make</label></td><td><label><input type="radio" name="t12_30" value="D"> go</label></td></tr>
+        </table>
+      </div>
+    </div>
+    <div style="display:flex; flex-wrap:wrap; align-items:center;">
+      <button class="check-btn" onclick="checkTest('test12')">✅ Kiểm tra</button>
+      <button class="toggle-btn" onclick="toggleAnsKey('key12')">🔑 Đáp án</button>
+      <button class="toggle-btn" onclick="toggleVi('vi12')">🌐 Bản dịch</button>
+    </div>
+    <div id="key12" class="key-block hidden"><strong>21.D</strong> remember | <strong>22.C</strong> that | <strong>23.D</strong> contains | <strong>24.A</strong> But | <strong>25.B</strong> turning | <strong>26.C</strong> from | <strong>27.C</strong> bring | <strong>28.D</strong> which | <strong>29.A</strong> its | <strong>30.B</strong> do</div>
+    <div id="vi12" class="vi-box hidden">Chính bố mẹ tôi, tất nhiên, đã dạy tôi đọc. Tôi không thể (21) nhớ cuộc sống của mình trước khi biết đọc, không có sách. Khi tôi bắt đầu đọc, một cuốn sách chủ yếu là hình ảnh. Bây giờ (22) khi tôi lớn hơn, một cuốn sách thường chỉ (23) chứa đựng từ ngữ trong hầu hết các trường hợp, (24) nhưng tôi cũng yêu thích sách nghệ thuật, (25) lật giở từng trang để ngắm nhìn một cách chậm rãi và thèm thuồng những bức tranh (26) từ các bức tường của các phòng trưng bày và bảo tàng trên khắp hành tinh.<br><br>Tôi dành hàng giờ để đọc, lạc vào những thế giới khác, du lịch, mơ mộng, tưởng tượng về con người và địa điểm. Sách (27) mang đến cho tôi những mùi hương và âm thanh mà tôi có thể không bao giờ trải nghiệm trực tiếp, nhưng (28) điều đó dường như làm cho cuộc sống của tôi thú vị hơn.<br><br>Tình yêu sách này không phải không có (29) những vấn đề của riêng nó. Ví dụ, khi tôi đến rạp chiếu phim để xem phim với bạn bè, tôi không hào hứng như họ (30) làm – tôi chỉ nóng lòng được trở về nhà với những cuốn sách của mình.</div>
+  </article>
+  
+    <!-- ========== TEST 13 ========== -->
+  <article class="glass-card test-item" data-testid="test13">
+    <div class="test-header"><span class="test-badge">Test 13</span><h2 class="test-title">CARTOON FILMS</h2></div>
+    <div class="two-col">
+      <div class="passage-box">Cartoon films have very few limits. If you can draw something, you can <span class="blank" data-q="21">21</span> it move on the cinema screen. The use <span class="blank" data-q="22">22</span> new ideas and advanced computer programs means that cartoons are becoming exciting again for people of <span class="blank" data-q="23">23</span> ages.<br><br>By the <span class="blank" data-q="24">24</span> of the 1970s, the cinema world had decided that cartoons were only for children. But soon <span class="blank" data-q="25">25</span> one or two directors had some original new ideas. They proved that it was possible to make films in which both adults and children could <span class="blank" data-q="26">26</span> the fun.<br><br>However, not <span class="blank" data-q="27">27</span> cartoon film was successful. The Black Cauldron, for example, failed, mainly because it was too <span class="blank" data-q="28">28</span> for children and too childish for adults. Directors learnt from this <span class="blank" data-q="29">29</span> and the film companies began to make large <span class="blank" data-q="30">30</span> of money again.</div>
+      <div class="answer-col">
+        <table>
+          <tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th></tr>
+          <tr data-q="21"><td>21</td><td><label><input type="radio" name="t13_21" value="A"> get</label></td><td><label><input type="radio" name="t13_21" value="B"> cause</label></td><td><label><input type="radio" name="t13_21" value="C"> wish</label></td><td><label><input type="radio" name="t13_21" value="D"> make</label></td></tr>
+          <tr data-q="22"><td>22</td><td><label><input type="radio" name="t13_22" value="A"> with</label></td><td><label><input type="radio" name="t13_22" value="B"> for</label></td><td><label><input type="radio" name="t13_22" value="C"> of</label></td><td><label><input type="radio" name="t13_22" value="D"> by</label></td></tr>
+          <tr data-q="23"><td>23</td><td><label><input type="radio" name="t13_23" value="A"> all</label></td><td><label><input type="radio" name="t13_23" value="B"> other</label></td><td><label><input type="radio" name="t13_23" value="C"> more</label></td><td><label><input type="radio" name="t13_23" value="D"> these</label></td></tr>
+          <tr data-q="24"><td>24</td><td><label><input type="radio" name="t13_24" value="A"> departure</label></td><td><label><input type="radio" name="t13_24" value="B"> finish</label></td><td><label><input type="radio" name="t13_24" value="C"> end</label></td><td><label><input type="radio" name="t13_24" value="D"> back</label></td></tr>
+          <tr data-q="25"><td>25</td><td><label><input type="radio" name="t13_25" value="A"> then</label></td><td><label><input type="radio" name="t13_25" value="B"> later</label></td><td><label><input type="radio" name="t13_25" value="C"> next</label></td><td><label><input type="radio" name="t13_25" value="D"> afterwards</label></td></tr>
+          <tr data-q="26"><td>26</td><td><label><input type="radio" name="t13_26" value="A"> add</label></td><td><label><input type="radio" name="t13_26" value="B"> share</label></td><td><label><input type="radio" name="t13_26" value="C"> mix</label></td><td><label><input type="radio" name="t13_26" value="D"> divide</label></td></tr>
+          <tr data-q="27"><td>27</td><td><label><input type="radio" name="t13_27" value="A"> every</label></td><td><label><input type="radio" name="t13_27" value="B"> both</label></td><td><label><input type="radio" name="t13_27" value="C"> any</label></td><td><label><input type="radio" name="t13_27" value="D"> each</label></td></tr>
+          <tr data-q="28"><td>28</td><td><label><input type="radio" name="t13_28" value="A"> afraid</label></td><td><label><input type="radio" name="t13_28" value="B"> fearful</label></td><td><label><input type="radio" name="t13_28" value="C"> frightening</label></td><td><label><input type="radio" name="t13_28" value="D"> nervous</label></td></tr>
+          <tr data-q="29"><td>29</td><td><label><input type="radio" name="t13_29" value="A"> damage</label></td><td><label><input type="radio" name="t13_29" value="B"> crimes</label></td><td><label><input type="radio" name="t13_29" value="C"> mistake</label></td><td><label><input type="radio" name="t13_29" value="D"> fault</label></td></tr>
+          <tr data-q="30"><td>30</td><td><label><input type="radio" name="t13_30" value="A"> amounts</label></td><td><label><input type="radio" name="t13_30" value="B"> accounts</label></td><td><label><input type="radio" name="t13_30" value="C"> numbers</label></td><td><label><input type="radio" name="t13_30" value="D"> totals</label></td></tr>
+        </table>
+      </div>
+    </div>
+    <div style="display:flex; flex-wrap:wrap; align-items:center;">
+      <button class="check-btn" onclick="checkTest('test13')">✅ Kiểm tra</button>
+      <button class="toggle-btn" onclick="toggleAnsKey('key13')">🔑 Đáp án</button>
+      <button class="toggle-btn" onclick="toggleVi('vi13')">🌐 Bản dịch</button>
+    </div>
+    <div id="key13" class="key-block hidden"><strong>21.D</strong> make | <strong>22.C</strong> of | <strong>23.A</strong> all | <strong>24.C</strong> end | <strong>25.D</strong> afterwards | <strong>26.B</strong> share | <strong>27.A</strong> every | <strong>28.C</strong> frightening | <strong>29.C</strong> mistake | <strong>30.A</strong> amounts</div>
+    <div id="vi13" class="vi-box hidden">Phim hoạt hình có rất ít giới hạn. Nếu bạn có thể vẽ một cái gì đó, bạn có thể (21) làm cho nó chuyển động trên màn hình điện ảnh. Việc sử dụng (22) những ý tưởng mới và các chương trình máy tính tiên tiến có nghĩa là phim hoạt hình đang trở nên thú vị trở lại đối với (23) mọi lứa tuổi.<br><br>Vào (24) cuối những năm 1970, thế giới điện ảnh đã quyết định rằng phim hoạt hình chỉ dành cho trẻ em. Nhưng ngay (25) sau đó, một hoặc hai đạo diễn đã có những ý tưởng mới độc đáo. Họ đã chứng minh rằng có thể tạo ra những bộ phim mà cả người lớn và trẻ em đều có thể (26) chia sẻ niềm vui.<br><br>Tuy nhiên, không (27) phải bộ phim hoạt hình nào cũng thành công. Ví dụ, The Black Cauldron đã thất bại, chủ yếu là vì nó quá (28) đáng sợ đối với trẻ em và quá trẻ con đối với người lớn. Các đạo diễn đã học hỏi từ (29) sai lầm này và các công ty phim bắt đầu kiếm được những (30) khoản tiền lớn trở lại.</div>
+  </article>
+  
+    <!-- ========== TEST 14 ========== -->
+  <article class="glass-card test-item" data-testid="test14">
+    <div class="test-header"><span class="test-badge">Test 14</span><h2 class="test-title">FAMILY MEALS</h2></div>
+    <div class="two-col">
+      <div class="passage-box">Does your family sit down together every day to share a meal? Does someone plan the food carefully, buy it <span class="blank" data-q="21">21</span> and cook it <span class="blank" data-q="22">22</span> so that you really enjoy it? Nowadays, the answer to these questions <span class="blank" data-q="23">23</span> often 'no'. Adults are usually working and arrive home late. Granny probably lives too <span class="blank" data-q="24">24</span> away to visit regularly. Children eat fast so they never learn that preparing good food and eating healthily <span class="blank" data-q="25">25</span> time and thought. In some families, each person eats separately, <span class="blank" data-q="26">26</span> television or working at a desk, and the children often eat <span class="blank" data-q="27">27</span>.<br><br>By sitting <span class="blank" data-q="28">28</span> the table with other people, however, children have the chance to learn that a shared meal is a <span class="blank" data-q="29">29</span> for family members to tell each other their news. But if we can't <span class="blank" data-q="30">30</span> eat together, we should try to have family meals at weekends. It's good for our health, it's good for society, and it's fun.</div>
+      <div class="answer-col">
+        <table>
+          <tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th></tr>
+          <tr data-q="21"><td>21</td><td><label><input type="radio" name="t14_21" value="A"> local</label></td><td><label><input type="radio" name="t14_21" value="B"> locally</label></td><td><label><input type="radio" name="t14_21" value="C"> near</label></td><td><label><input type="radio" name="t14_21" value="D"> nearly</label></td></tr>
+          <tr data-q="22"><td>22</td><td><label><input type="radio" name="t14_22" value="A"> well</label></td><td><label><input type="radio" name="t14_22" value="B"> nice</label></td><td><label><input type="radio" name="t14_22" value="C"> tasty</label></td><td><label><input type="radio" name="t14_22" value="D"> good</label></td></tr>
+          <tr data-q="23"><td>23</td><td><label><input type="radio" name="t14_23" value="A"> gives</label></td><td><label><input type="radio" name="t14_23" value="B"> is</label></td><td><label><input type="radio" name="t14_23" value="C"> has</label></td><td><label><input type="radio" name="t14_23" value="D"> makes</label></td></tr>
+          <tr data-q="24"><td>24</td><td><label><input type="radio" name="t14_24" value="A"> distant</label></td><td><label><input type="radio" name="t14_24" value="B"> long</label></td><td><label><input type="radio" name="t14_24" value="C"> much</label></td><td><label><input type="radio" name="t14_24" value="D"> far</label></td></tr>
+          <tr data-q="25"><td>25</td><td><label><input type="radio" name="t14_25" value="A"> wants</label></td><td><label><input type="radio" name="t14_25" value="B"> gets</label></td><td><label><input type="radio" name="t14_25" value="C"> takes</label></td><td><label><input type="radio" name="t14_25" value="D"> asks</label></td></tr>
+          <tr data-q="26"><td>26</td><td><label><input type="radio" name="t14_26" value="A"> seeing</label></td><td><label><input type="radio" name="t14_26" value="B"> looking</label></td><td><label><input type="radio" name="t14_26" value="C"> watching</label></td><td><label><input type="radio" name="t14_26" value="D"> attending</label></td></tr>
+          <tr data-q="27"><td>27</td><td><label><input type="radio" name="t14_27" value="A"> single</label></td><td><label><input type="radio" name="t14_27" value="B"> alone</label></td><td><label><input type="radio" name="t14_27" value="C"> lonely</label></td><td><label><input type="radio" name="t14_27" value="D"> privately</label></td></tr>
+          <tr data-q="28"><td>28</td><td><label><input type="radio" name="t14_28" value="A"> at</label></td><td><label><input type="radio" name="t14_28" value="B"> on</label></td><td><label><input type="radio" name="t14_28" value="C"> by</label></td><td><label><input type="radio" name="t14_28" value="D"> in</label></td></tr>
+          <tr data-q="29"><td>29</td><td><label><input type="radio" name="t14_29" value="A"> possibility</label></td><td><label><input type="radio" name="t14_29" value="B"> chance</label></td><td><label><input type="radio" name="t14_29" value="C"> situation</label></td><td><label><input type="radio" name="t14_29" value="D"> event</label></td></tr>
+          <tr data-q="30"><td>30</td><td><label><input type="radio" name="t14_30" value="A"> quite</label></td><td><label><input type="radio" name="t14_30" value="B"> ever</label></td><td><label><input type="radio" name="t14_30" value="C"> never</label></td><td><label><input type="radio" name="t14_30" value="D"> always</label></td></tr>
+        </table>
+      </div>
+    </div>
+    <div style="display:flex; flex-wrap:wrap; align-items:center;">
+      <button class="check-btn" onclick="checkTest('test14')">✅ Kiểm tra</button>
+      <button class="toggle-btn" onclick="toggleAnsKey('key14')">🔑 Đáp án</button>
+      <button class="toggle-btn" onclick="toggleVi('vi14')">🌐 Bản dịch</button>
+    </div>
+    <div id="key14" class="key-block hidden"><strong>21.B</strong> locally | <strong>22.A</strong> well | <strong>23.B</strong> is | <strong>24.D</strong> far | <strong>25.C</strong> takes | <strong>26.C</strong> watching | <strong>27.B</strong> alone | <strong>28.A</strong> at | <strong>29.B</strong> chance | <strong>30.D</strong> always</div>
+    <div id="vi14" class="vi-box hidden">Gia đình bạn có ngồi quây quần bên nhau mỗi ngày để dùng bữa không? Có ai đó lên kế hoạch cẩn thận cho bữa ăn, mua nó (21) tại địa phương và nấu nó thật (22) ngon để bạn thực sự thưởng thức không? Ngày nay, câu trả lời cho những câu hỏi này thường (23) là 'không'. Người lớn thường đi làm và về nhà muộn. Bà có lẽ sống quá (24) xa để đến thăm thường xuyên. Trẻ em ăn nhanh đến nỗi chúng không bao giờ học được rằng việc chuẩn bị đồ ăn ngon và ăn uống lành mạnh (25) cần có thời gian và suy nghĩ. Trong một số gia đình, mỗi người ăn riêng, (26) xem ti vi hoặc làm việc tại bàn làm việc, và trẻ em thường ăn (27) một mình.<br><br>Tuy nhiên, bằng cách ngồi (28) vào bàn với những người khác, trẻ em có cơ hội học được rằng bữa ăn chung là (29) cơ hội để các thành viên trong gia đình kể cho nhau nghe tin tức của mình. Nhưng nếu chúng ta không thể (30) luôn luôn ăn cùng nhau, chúng ta nên cố gắng có những bữa ăn gia đình vào cuối tuần. Nó tốt cho sức khỏe, tốt cho xã hội, và nó vui.</div>
+  </article>
+  
+    <!-- ========== TEST 15 ========== -->
+  <article class="glass-card test-item" data-testid="test15">
+    <div class="test-header"><span class="test-badge">Test 15</span><h2 class="test-title">WOMEN MAKE THE BEST DRIVERS</h2></div>
+    <div class="two-col">
+      <div class="passage-box">In London, only one in ten bus drivers is a woman. Yet, according to the results of recent research, women are better at <span class="blank" data-q="21">21</span> with problem passengers, have fewer accidents and are quicker at learning to drive buses than men.<br><br>Connie Wilson <span class="blank" data-q="22">22</span> a bus driver a year ago. "<span class="blank" data-q="23">23</span> first, driving a bus was quite frightening," she says. "I had no idea of the size of the vehicle or <span class="blank" data-q="24">24</span> to handle it. But after seven weeks of training, I passed the test first time. Trying to <span class="blank" data-q="25">25</span> to the timetable when the traffic is <span class="blank" data-q="26">26</span> isn't easy but I like the challenges. Some passengers <span class="blank" data-q="27">27</span> be rude, especially if they've had to <span class="blank" data-q="28">28</span> a long time for the bus. But most are pleased to have a woman driver. There's no <span class="blank" data-q="29">29</span> a woman can't do the job just as well as a man. I'd <span class="blank" data-q="30">30</span> it to any woman!"</div>
+      <div class="answer-col">
+        <table>
+          <tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th></tr>
+          <tr data-q="21"><td>21</td><td><label><input type="radio" name="t15_21" value="A"> managing</label></td><td><label><input type="radio" name="t15_21" value="B"> dealing</label></td><td><label><input type="radio" name="t15_21" value="C"> considering</label></td><td><label><input type="radio" name="t15_21" value="D"> behaving</label></td></tr>
+          <tr data-q="22"><td>22</td><td><label><input type="radio" name="t15_22" value="A"> got</label></td><td><label><input type="radio" name="t15_22" value="B"> started</label></td><td><label><input type="radio" name="t15_22" value="C"> turned</label></td><td><label><input type="radio" name="t15_22" value="D"> became</label></td></tr>
+          <tr data-q="23"><td>23</td><td><label><input type="radio" name="t15_23" value="A"> At</label></td><td><label><input type="radio" name="t15_23" value="B"> By</label></td><td><label><input type="radio" name="t15_23" value="C"> In</label></td><td><label><input type="radio" name="t15_23" value="D"> From</label></td></tr>
+          <tr data-q="24"><td>24</td><td><label><input type="radio" name="t15_24" value="A"> what</label></td><td><label><input type="radio" name="t15_24" value="B"> which</label></td><td><label><input type="radio" name="t15_24" value="C"> why</label></td><td><label><input type="radio" name="t15_24" value="D"> how</label></td></tr>
+          <tr data-q="25"><td>25</td><td><label><input type="radio" name="t15_25" value="A"> check</label></td><td><label><input type="radio" name="t15_25" value="B"> respect</label></td><td><label><input type="radio" name="t15_25" value="C"> keep</label></td><td><label><input type="radio" name="t15_25" value="D"> carry</label></td></tr>
+          <tr data-q="26"><td>26</td><td><label><input type="radio" name="t15_26" value="A"> deep</label></td><td><label><input type="radio" name="t15_26" value="B"> large</label></td><td><label><input type="radio" name="t15_26" value="C"> heavy</label></td><td><label><input type="radio" name="t15_26" value="D"> rough</label></td></tr>
+          <tr data-q="27"><td>27</td><td><label><input type="radio" name="t15_27" value="A"> can</label></td><td><label><input type="radio" name="t15_27" value="B"> should</label></td><td><label><input type="radio" name="t15_27" value="C"> need</label></td><td><label><input type="radio" name="t15_27" value="D"> want</label></td></tr>
+          <tr data-q="28"><td>28</td><td><label><input type="radio" name="t15_28" value="A"> delay</label></td><td><label><input type="radio" name="t15_28" value="B"> wait</label></td><td><label><input type="radio" name="t15_28" value="C"> expect</label></td><td><label><input type="radio" name="t15_28" value="D"> attend</label></td></tr>
+          <tr data-q="29"><td>29</td><td><label><input type="radio" name="t15_29" value="A"> cause</label></td><td><label><input type="radio" name="t15_29" value="B"> reason</label></td><td><label><input type="radio" name="t15_29" value="C"> purpose</label></td><td><label><input type="radio" name="t15_29" value="D"> account</label></td></tr>
+          <tr data-q="30"><td>30</td><td><label><input type="radio" name="t15_30" value="A"> approve</label></td><td><label><input type="radio" name="t15_30" value="B"> lead</label></td><td><label><input type="radio" name="t15_30" value="C"> recommend</label></td><td><label><input type="radio" name="t15_30" value="D"> admire</label></td></tr>
+        </table>
+      </div>
+    </div>
+    <div style="display:flex; flex-wrap:wrap; align-items:center;">
+      <button class="check-btn" onclick="checkTest('test15')">✅ Kiểm tra</button>
+      <button class="toggle-btn" onclick="toggleAnsKey('key15')">🔑 Đáp án</button>
+      <button class="toggle-btn" onclick="toggleVi('vi15')">🌐 Bản dịch</button>
+    </div>
+    <div id="key15" class="key-block hidden"><strong>21.B</strong> dealing | <strong>22.D</strong> became | <strong>23.A</strong> At | <strong>24.D</strong> how | <strong>25.C</strong> keep | <strong>26.C</strong> heavy | <strong>27.A</strong> can | <strong>28.B</strong> wait | <strong>29.B</strong> reason | <strong>30.C</strong> recommend</div>
+    <div id="vi15" class="vi-box hidden">Ở London, chỉ có một trong mười tài xế xe buýt là phụ nữ. Tuy nhiên, theo kết quả của nghiên cứu gần đây, phụ nữ giỏi hơn trong việc (21) đối phó với những hành khách gây rối, ít gây tai nạn hơn và nhanh hơn trong việc học lái xe buýt so với nam giới.<br><br>Connie Wilson đã (22) trở thành tài xế xe buýt cách đây một năm. Bà nói: "(23) Lúc đầu, lái xe buýt khá đáng sợ. Tôi không biết gì về kích thước của chiếc xe hay (24) cách điều khiển nó. Nhưng sau bảy tuần đào tạo, tôi đã vượt qua bài kiểm tra ngay lần đầu tiên. Cố gắng (25) bám sát lịch trình khi giao thông (26) đông đúc không dễ dàng nhưng tôi thích những thử thách. Một số hành khách (27) có thể thô lỗ, đặc biệt nếu họ đã phải (28) chờ đợi xe buýt quá lâu. Nhưng hầu hết đều hài lòng khi có một nữ tài xế. Không có (29) lý do gì một người phụ nữ không thể làm công việc này tốt như một người đàn ông. Tôi sẽ (30) giới thiệu nó cho bất kỳ người phụ nữ nào!"</div>
+  </article>
+  
+    <!-- ========== TEST 26 (Đề mẫu – nguyên Test 16) ========== -->
+  <article class="glass-card test-item" data-testid="test26">
+    <div class="test-header"><span class="test-badge">Test 26</span><h2 class="test-title">WHO WANTS TO BE A MILLIONAIRE?</h2></div>
+    <div class="two-col">
+      <div class="passage-box">The world most popular TV quiz show started in the UK in 1998. The idea has now spread to over 100 countries, including Greece and Spain.<br><br>One person, the contestant, must answer 15 multiple-choice questions correctly to win the $1m top <span class="blank" data-q="21">21</span>. If at any <span class="blank" data-q="22">22</span> they answer incorrectly, the game is over. A computer selects the questions from a database of 2,500. <span class="blank" data-q="23">23</span> that point, nobody knows <span class="blank" data-q="24">24</span> questions about to be asked. The programme gets more <span class="blank" data-q="25">25</span> as the money increases. Now contestants are really afraid <span class="blank" data-q="26">26</span> making a mistake. It's possible, <span class="blank" data-q="27">27</span> unusual, for a contestant to leave the show with <span class="blank" data-q="28">28</span> money at all.<br><br>Contestants can get help. One way is to "Phone a friend". They may speak to a friend <span class="blank" data-q="29">29</span> the phone for 30 seconds to <span class="blank" data-q="30">30</span> the question.<br><br>The phrase "Can I phone a friend?" has now become part of modern everyday English.</div>
+      <div class="answer-col">
+        <table>
+          <tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th></tr>
+          <tr data-q="21"><td>21</td><td><label><input type="radio" name="t26_21" value="A"> amount</label></td><td><label><input type="radio" name="t26_21" value="B"> prize</label></td><td><label><input type="radio" name="t26_21" value="C"> award</label></td><td><label><input type="radio" name="t26_21" value="D"> winning</label></td></tr>
+          <tr data-q="22"><td>22</td><td><label><input type="radio" name="t26_22" value="A"> time</label></td><td><label><input type="radio" name="t26_22" value="B"> period</label></td><td><label><input type="radio" name="t26_22" value="C"> day</label></td><td><label><input type="radio" name="t26_22" value="D"> hour</label></td></tr>
+          <tr data-q="23"><td>23</td><td><label><input type="radio" name="t26_23" value="A"> On</label></td><td><label><input type="radio" name="t26_23" value="B"> From</label></td><td><label><input type="radio" name="t26_23" value="C"> Since</label></td><td><label><input type="radio" name="t26_23" value="D"> Until</label></td></tr>
+          <tr data-q="24"><td>24</td><td><label><input type="radio" name="t26_24" value="A"> the</label></td><td><label><input type="radio" name="t26_24" value="B"> some</label></td><td><label><input type="radio" name="t26_24" value="C"> what</label></td><td><label><input type="radio" name="t26_24" value="D"> that</label></td></tr>
+          <tr data-q="25"><td>25</td><td><label><input type="radio" name="t26_25" value="A"> serious</label></td><td><label><input type="radio" name="t26_25" value="B"> important</label></td><td><label><input type="radio" name="t26_25" value="C"> strong</label></td><td><label><input type="radio" name="t26_25" value="D"> firm</label></td></tr>
+          <tr data-q="26"><td>26</td><td><label><input type="radio" name="t26_26" value="A"> of</label></td><td><label><input type="radio" name="t26_26" value="B"> to</label></td><td><label><input type="radio" name="t26_26" value="C"> for</label></td><td><label><input type="radio" name="t26_26" value="D"> by</label></td></tr>
+          <tr data-q="27"><td>27</td><td><label><input type="radio" name="t26_27" value="A"> and</label></td><td><label><input type="radio" name="t26_27" value="B"> or</label></td><td><label><input type="radio" name="t26_27" value="C"> but</label></td><td><label><input type="radio" name="t26_27" value="D"> even</label></td></tr>
+          <tr data-q="28"><td>28</td><td><label><input type="radio" name="t26_28" value="A"> no</label></td><td><label><input type="radio" name="t26_28" value="B"> some</label></td><td><label><input type="radio" name="t26_28" value="C"> any</label></td><td><label><input type="radio" name="t26_28" value="D"> much</label></td></tr>
+          <tr data-q="29"><td>29</td><td><label><input type="radio" name="t26_29" value="A"> by</label></td><td><label><input type="radio" name="t26_29" value="B"> on</label></td><td><label><input type="radio" name="t26_29" value="C"> with</label></td><td><label><input type="radio" name="t26_29" value="D"> in</label></td></tr>
+          <tr data-q="30"><td>30</td><td><label><input type="radio" name="t26_30" value="A"> discuss</label></td><td><label><input type="radio" name="t26_30" value="B"> talk</label></td><td><label><input type="radio" name="t26_30" value="C"> chat</label></td><td><label><input type="radio" name="t26_30" value="D"> argue</label></td></tr>
+        </table>
+      </div>
+    </div>
+    <div style="display:flex; flex-wrap:wrap; align-items:center;">
+      <button class="check-btn" onclick="checkTest('test26')">✅ Kiểm tra</button>
+      <button class="toggle-btn" onclick="toggleAnsKey('key26')">🔑 Đáp án</button>
+      <button class="toggle-btn" onclick="toggleVi('vi26')">🌐 Bản dịch</button>
+    </div>
+    <div id="key26" class="key-block hidden"><strong>21.B</strong> prize | <strong>22.A</strong> time | <strong>23.D</strong> Until | <strong>24.C</strong> what | <strong>25.B</strong> important | <strong>26.A</strong> of | <strong>27.C</strong> but | <strong>28.A</strong> no | <strong>29.B</strong> on | <strong>30.A</strong> discuss</div>
+    <div id="vi26" class="vi-box hidden">Chương trình trò chơi truyền hình nổi tiếng nhất thế giới bắt đầu tại Anh vào năm 1998. Ý tưởng này hiện đã lan rộng ra hơn 100 quốc gia, bao gồm Hy Lạp và Tây Ban Nha.<br><br>Một người chơi, thí sinh, phải trả lời đúng 15 câu hỏi trắc nghiệm để giành được giải thưởng cao nhất trị giá 1 triệu đô la (21). Nếu bất kỳ lúc nào (22) họ trả lời sai, trò chơi kết thúc. Máy tính chọn câu hỏi từ cơ sở dữ liệu 2.500 câu. (23) thời điểm đó, không ai biết (24) câu hỏi sắp được đưa ra. Chương trình trở nên (25) hơn khi tiền thưởng tăng lên. Lúc này các thí sinh thực sự sợ (26) phạm sai lầm. Có thể, (27) hiếm khi, một thí sinh rời chương trình mà (28) đồng tiền nào cả.<br><br>Thí sinh có thể nhận được sự trợ giúp. Một cách là "Gọi điện cho bạn bè". Họ có thể nói chuyện với một người bạn (29) điện thoại trong 30 giây để (30) câu hỏi.<br><br>Câu "Tôi gọi điện cho bạn được không?" giờ đây đã trở thành một phần của tiếng Anh giao tiếp hiện đại.</div>
+  </article>
+  
+  
+  <div id="noResults" class="hidden" style="text-align:center;padding:2rem;">❌ Không tìm thấy test phù hợp.</div>
+</div>
+<script>
+  const answerKeys = {
+    test16: {21:'B',22:'A',23:'D',24:'C',25:'B',26:'A',27:'C',28:'A',29:'B',30:'A'},
+    test17: {21:'C',22:'A',23:'B',24:'A',25:'D',26:'B',27:'A',28:'C',29:'D',30:'C'},
+    test18: {21:'A',22:'B',23:'C',24:'D',25:'A',26:'B',27:'C',28:'A',29:'D',30:'A'},
+	test19: {21:'B',22:'A',23:'C',24:'D',25:'A',26:'B',27:'C',28:'D',29:'B',30:'A'},
+	test20: {21:'C',22:'A',23:'B',24:'C',25:'A',26:'D',27:'B',28:'A',29:'B',30:'A'},
+	test21: {21:'A',22:'C',23:'B',24:'C',25:'D',26:'A',27:'B',28:'D',29:'C',30:'B'},
+	test22: {21:'B',22:'C',23:'D',24:'C',25:'A',26:'D',27:'C',28:'A',29:'C',30:'C'},
+	test23: {21:'B',22:'C',23:'C',24:'A',25:'D',26:'B',27:'C',28:'A',29:'B',30:'C'},
+	test24: {21:'C',22:'A',23:'D',24:'D',25:'A',26:'B',27:'C',28:'B',29:'A',30:'C'},
+	test25: {21:'C',22:'A',23:'B',24:'B',25:'A',26:'D',27:'D',28:'C',29:'C',30:'B'},
+	test1:  {21:'B',22:'A',23:'D',24:'B',25:'C',26:'A',27:'D',28:'A',29:'B',30:'C'},
+	test2:  {21:'B',22:'A',23:'D',24:'C',25:'B',26:'A',27:'D',28:'C',29:'B',30:'A'},
+	test3:  {21:'C',22:'A',23:'B',24:'D',25:'A',26:'C',27:'A',28:'B',29:'D',30:'A'},
+	test4:  {21:'A',22:'C',23:'B',24:'D',25:'A',26:'C',27:'D',28:'A',29:'B',30:'C'},
+	test5:  {21:'A',22:'C',23:'B',24:'D',25:'A',26:'C',27:'D',28:'A',29:'B',30:'C'},
+	test6:  {21:'A',22:'C',23:'B',24:'D',25:'A',26:'C',27:'D',28:'A',29:'D',30:'D'},
+	test7:  {21:'A',22:'B',23:'A',24:'A',25:'C',26:'C',27:'D',28:'A',29:'A',30:'A'},
+	test8:  {21:'A',22:'B',23:'D',24:'A',25:'B',26:'A',27:'D',28:'B',29:'C',30:'A'},
+	test9:  {21:'B',22:'A',23:'D',24:'B',25:'A',26:'C',27:'D',28:'A',29:'C',30:'A'},
+	test10: {21:'B',22:'C',23:'D',24:'A',25:'B',26:'A',27:'D',28:'B',29:'C',30:'A'},
+	test11: {21:'B',22:'D',23:'C',24:'A',25:'D',26:'B',27:'D',28:'C',29:'C',30:'A'},
+	test12: {21:'D',22:'C',23:'D',24:'A',25:'B',26:'C',27:'C',28:'D',29:'A',30:'B'},
+	test13: {21:'D',22:'C',23:'A',24:'C',25:'D',26:'B',27:'A',28:'C',29:'C',30:'A'},
+	test14: {21:'B',22:'A',23:'B',24:'D',25:'C',26:'C',27:'B',28:'A',29:'B',30:'D'},
+	test15: {21:'B',22:'D',23:'A',24:'D',25:'C',26:'C',27:'A',28:'B',29:'B',30:'C'},
+	test26: {21:'B',22:'A',23:'D',24:'C',25:'B',26:'A',27:'C',28:'A',29:'B',30:'A'}
+  };
+  function toggleVi(id) { document.getElementById(id).classList.toggle('hidden'); }
+  function toggleAnsKey(id) { document.getElementById(id).classList.toggle('hidden'); }
+  function checkTest(testId) {
+    const article = document.querySelector(`.test-item[data-testid="${testId}"]`);
+    if (!article) return;
+    const rows = article.querySelectorAll('tr[data-q]');
+    const key = answerKeys[testId];
+    if (!key) return;
+    rows.forEach(row => {
+      const qNum = row.getAttribute('data-q');
+      const correct = key[qNum];
+      const selected = row.querySelector('input[type="radio"]:checked');
+      row.classList.remove('correct-row','wrong-row');
+      if (selected) {
+        if (selected.value === correct) row.classList.add('correct-row');
+        else row.classList.add('wrong-row');
+      }
+    });
+  }
+  function toggleTheme() {
+    document.body.classList.toggle('light-mode');
+    const btn = document.getElementById('themeToggle');
+    btn.textContent = document.body.classList.contains('light-mode') ? '☀️ Light' : '🌙 Dark';
+    localStorage.setItem('theme', document.body.classList.contains('light-mode') ? 'light' : 'dark');
+  }
+  if (localStorage.getItem('theme') === 'light') {
+    document.body.classList.add('light-mode');
+    document.getElementById('themeToggle').textContent = '☀️ Light';
+  }
+  const select = document.getElementById('testSelect');
+  document.querySelectorAll('.test-item').forEach(article => {
+    const id = article.dataset.testid;
+    const title = article.querySelector('.test-title').textContent;
+    const opt = document.createElement('option');
+    opt.value = id; opt.textContent = title + ' (' + id.replace('test','Test ') + ')';
+    select.appendChild(opt);
+  });
+  select.addEventListener('change', () => {
+    const val = select.value;
+    document.querySelectorAll('.test-item').forEach(a => {
+      a.style.display = (val === 'all' || a.dataset.testid === val) ? '' : 'none';
+    });
+  });
+</script>
+</body>
+</html>
